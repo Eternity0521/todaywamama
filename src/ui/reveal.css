@@ -1,0 +1,69 @@
+/* 翻牌揭晓页（指导书 §7.3） */
+.reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  gap: var(--sp-6);
+  padding: var(--sp-5);
+  text-align: center;
+}
+
+.reveal-card {
+  width: min(300px, 80vw);
+  padding: var(--sp-6) var(--sp-5);
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glow);
+  animation: flipIn 0.7s both;
+}
+
+.reveal-title {
+  margin-top: var(--sp-4);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.reveal-desc {
+  margin-top: var(--sp-3);
+  color: var(--text-dim);
+  font-size: var(--fs-md);
+  line-height: 1.7;
+}
+
+.reveal-cta {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 40px;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  box-shadow: var(--glow);
+  cursor: pointer;
+  animation: fadeUp 0.4s both;
+}
+
+@keyframes flipIn {
+  from {
+    transform: rotateY(90deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

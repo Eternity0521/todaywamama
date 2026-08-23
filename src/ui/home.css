@@ -1,0 +1,124 @@
+/* 首页（指导书 §7.1） */
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: var(--sp-5) var(--sp-4);
+  text-align: center;
+  gap: var(--sp-5);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景霓虹光晕 */
+.home::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 92, 255, 0.28), transparent 70%);
+  pointer-events: none;
+}
+
+.home-head {
+  margin-top: 48px;
+}
+
+.brand {
+  font-size: var(--fs-xxl);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  background: linear-gradient(135deg, var(--text), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.date {
+  margin-top: var(--sp-2);
+  color: var(--text-dim);
+  font-size: var(--fs-md);
+  letter-spacing: 0.2em;
+}
+
+.welcome,
+.yesterday {
+  width: 100%;
+  max-width: 340px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: var(--sp-5) var(--sp-4);
+}
+
+.welcome-slogan {
+  font-size: var(--fs-xl);
+  font-weight: 700;
+}
+
+.welcome-sub {
+  color: var(--text-dim);
+  margin-top: var(--sp-4);
+  font-size: var(--fs-sm);
+}
+
+.welcome-list {
+  list-style: none;
+  margin-top: var(--sp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  font-size: var(--fs-md);
+}
+
+.yesterday {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+}
+
+.yesterday-label {
+  color: var(--text-dim);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.15em;
+}
+
+.yesterday-keyword {
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+}
+
+.yesterday-keyword b {
+  color: var(--text);
+}
+
+.cta {
+  margin-top: auto;
+  margin-bottom: 48px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 48px;
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  box-shadow: var(--glow);
+  cursor: pointer;
+}
+
+.cta:active {
+  transform: scale(0.97);
+}
+
+.footer {
+  color: var(--text-dim);
+  font-size: var(--fs-xs);
+  padding-bottom: var(--sp-3);
+}

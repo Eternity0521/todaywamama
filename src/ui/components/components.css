@@ -1,0 +1,65 @@
+/* 通用小组件样式（Stars / SectionCard） */
+
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  line-height: 1;
+}
+
+.star {
+  display: inline-block;
+}
+
+.star-on {
+  color: var(--gold);
+  text-shadow: var(--glow-gold);
+}
+
+.star-off {
+  color: var(--star-off);
+}
+
+.stars-sm .star {
+  font-size: var(--fs-sm);
+}
+
+.stars-md .star {
+  font-size: var(--fs-lg);
+}
+
+.stars-lg .star {
+  font-size: var(--fs-xl);
+}
+
+.star-anim {
+  animation: starPop 0.3s both;
+}
+
+@keyframes starPop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.section-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-dim);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--sp-3);
+}
