@@ -8,11 +8,15 @@ export type Role = 'duelist' | 'initiator' | 'controller' | 'sentinel';
 
 export type Star = 1 | 2 | 3 | 4 | 5;
 
-/** 今日总运 / 主运卡（PRD §12/13） */
+/** 今日总运 / 主运卡（PRD §12/13；UI 融合后：卡面为主运核心内容，星级独立） */
 export interface MainLuck {
   stars: Star;
-  title: string; // 例：「火力全开」「娱乐局」
-  desc: string;  // 例：「今日适合主动寻找机会，但不要第一时间把自己送掉。」
+  cardId: string;   // 抽中的卡面 id（'card-01'…'card-10'，对应 src/assets/cards/*.webp）
+  cardName: string; // 卡名，如「相信直觉」
+  title: string;    // 卡面大字标题，如「别犹豫」
+  desc: string;     // 卡面解读段
+  good: string;     // 宜，如「宜先动」
+  bad: string;      // 忌，如「忌回头」
 }
 
 /** 幸运位置（PRD §14） */

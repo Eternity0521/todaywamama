@@ -2,18 +2,19 @@ import { useEffect, useState } from 'react';
 import type { DailyFortune } from '../../core/types';
 import { drawShareCard } from '../share/drawShareCard';
 import { downloadDataUrl } from '../share/saveImage';
+import { shareTextOf } from '../share/shareText';
 import { track } from '../analytics';
 import { copyText } from '../clipboard';
-import { shareTextOf } from './FortuneResult';
 import './share.css';
 
 interface Props {
   fortune: DailyFortune;
   onBack: () => void;
+  onHome: () => void;
 }
 
-/** 分享卡页（指导书 §7.5）：Canvas 生成图片 + 下载/长按保存/复制文案 */
-export default function ShareCard({ fortune, onBack }: Props) {
+/** 分享卡页（指导书 §7.5）——设计稿 share 屏：保存图片 / 分享给队友 / 返回首页 */
+export default function ShareCard({ fortune, onBack, onHome }: Props) {
   const [imgUrl, setImgUrl] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
@@ -36,22 +37,45 @@ export default function ShareCard({ fortune, onBack }: Props) {
 
   return (
     <main className="share">
-      {imgUrl ? (
-        <img className="share-img" src={imgUrl} alt="今日瓦运分享卡" />
-      ) : (
-        <div className="share-loading">生成中…</div>
-      )}
-      <p className="share-hint">💡 点不开下载时，长按图片即可保存</p>
-      <div className="share-actions">
-        <button className="share-btn primary" type="button" onClick={handleSave}>
-          保存图片
-        </button>
-        <button className="share-btn" type="button" onClick={handleCopy}>
-          发给队友
-        </button>
-        <button className="share-btn ghost" type="button" onClick={onBack}>
-          返回完整运势
-        </button>
+      <div className="share-inner">
+        <header className="share-head">
+          <button className="share-back" type="button" onClick={onBack} aria-label="返回完整运势">
+            <svg
+              width="11"
+              height="19"
+              viewBox="0 0 11 19"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M9.5 1.5 2 9.5l7.5 8" />
+            </svg>
+          </button>
+          <span className="share-step">分享卡</span>
+        </header>
+
+        <div className="share-stage">
+          {imgUrl ? (
+            <img className="share-img" src={imgUrl} alt="今日瓦运分享卡" />
+          ) : (
+            <div className="share-loading">生成中…</div>
+          )}
+        </div>
+
+        <div className="share-actions">
+          <button className="share-btn primary" type="button" onClick={handleSave}>
+            保存图片
+          </button>
+          <button className="share-btn secondary" type="button" onClick={handleCopy}>
+            分享给队友
+          </button>
+          <button className="share-btn ghost" type="button" onClick={onHome}>
+            返回首页
+          </button>
+        </div>
       </div>
       {toast && <p className="share-toast">{toast}</p>}
     </main>

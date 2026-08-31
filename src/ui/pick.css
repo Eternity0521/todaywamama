@@ -1,91 +1,233 @@
-/* 抽卡页（指导书 §7.2） */
+/* 抽卡页（设计稿 draw 屏：手动翻转、可翻回） */
+
 .pick {
+  position: relative;
+  z-index: 2;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: var(--sp-5);
-  gap: var(--sp-4);
+  padding: 32px 20px;
+}
+
+.pick-inner {
+  width: 100%;
+  max-width: 390px;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+}
+
+/* 头部：返回 + 步骤标签 */
+.pick-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pick-back {
+  width: 44px;
+  height: 44px;
+  margin-left: -14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-45);
+  transition: color 0.15s;
+}
+
+.pick-back:hover {
+  color: var(--ink);
+}
+
+.pick-step {
+  font: 700 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.16em;
+  color: var(--acc-55);
+}
+
+/* 标语 */
+.pick-slogan h1 {
+  font: 900 var(--fs-2xl) / 1.18 var(--font-sans);
+  color: #f5f1f9;
+  letter-spacing: -0.01em;
+}
+
+.pick-slogan p {
+  margin-top: 14px;
+  font: 400 var(--fs-md) / 1.7 var(--font-sans);
+  color: var(--ink-45);
+}
+
+/* 卡牌舞台 */
+.pick-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 380px;
+}
+
+.pick-cards {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+.pick-card {
+  position: relative;
+  width: 104px;
+  height: 184px;
+  flex: none;
+  cursor: pointer;
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
+}
+
+/* 待选：三卡扇形 */
+.pick-cards.phase-idle .pick-card-0 {
+  transform: rotate(-7deg) translateY(10px);
+}
+
+.pick-cards.phase-idle .pick-card-2 {
+  transform: rotate(7deg) translateY(10px);
+}
+
+/* 选中：居中放大（翻面 ⇄ 翻回由行内 rotateY 驱动） */
+.pick-cards.phase-chosen .pick-card.chosen,
+.pick-cards.phase-flip .pick-card.chosen {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 188px;
+  height: 333px;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+/* 未选中：下沉淡出 */
+.pick-cards.phase-chosen .pick-card:not(.chosen),
+.pick-cards.phase-flip .pick-card:not(.chosen) {
+  transform: translateY(18px) scale(0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pick-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.pick-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 卡背：深色渐变 + 菱形符号 */
+.pick-card-backface {
+  background: linear-gradient(180deg, var(--panel-2), #120e1a);
+  border: 1px solid var(--acc-30);
+}
+
+.pick-card-backface svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+/* 卡面：当日真实卡面图 */
+.pick-card-front {
+  background: var(--panel);
+  border: 1px solid var(--acc);
+  box-shadow: 0 0 60px -6px var(--acc-55);
+  transform: rotateY(180deg);
+}
+
+.pick-card-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pick-card-name {
+  font: 700 13px / 1.6 var(--font-mono);
+  letter-spacing: 0.16em;
+  color: var(--acc);
+  text-align: center;
+  padding: 10px;
+}
+
+/* 底部：抽到提示 + 卡面解读 */
+.pick-done {
+  animation: pickRise 0.4s ease both;
+}
+
+@keyframes pickRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pick-done-label {
+  font: 500 var(--fs-sm) / 1 var(--font-sans);
+  letter-spacing: 0.06em;
+  color: var(--acc);
   text-align: center;
 }
 
-.pick-title {
-  font-size: var(--fs-xl);
-  font-weight: 700;
-}
-
-.pick-sub {
-  color: var(--text-dim);
-  font-size: var(--fs-xs);
-}
-
-.cards {
+.pick-cta {
+  margin-top: 14px;
+  width: 100%;
+  height: 54px;
+  background: var(--acc);
   display: flex;
-  gap: var(--sp-4);
-  margin-top: var(--sp-4);
-}
-
-.card {
-  background: none;
-  border: none;
-  padding: 0;
-  perspective: 800px;
-  cursor: pointer;
-}
-
-.card-inner {
-  position: relative;
-  display: block;
-  width: 96px;
-  height: 144px;
-  transform-style: preserve-3d;
-  transition: transform 0.6s;
-}
-
-.card-face {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--sp-2);
-  border-radius: var(--radius-sm);
-  font-size: var(--fs-xl);
-  backface-visibility: hidden;
+  justify-content: space-between;
+  padding: 0 20px;
+  font: 800 var(--fs-lg) / 1 var(--font-sans);
+  color: var(--btn-ink);
+  cursor: pointer;
+  border: none;
+  transition: filter 0.15s, transform 0.1s;
 }
 
-.card-front {
-  background: linear-gradient(160deg, #1b2347, #12172e);
-  border: 1px solid var(--card-border);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+.pick-cta:hover {
+  filter: brightness(1.08);
 }
 
-.card-front em,
-.card-back em {
-  font-style: normal;
-  font-size: var(--fs-xs);
-  letter-spacing: 0.2em;
+.pick-cta:active {
+  transform: scale(0.985);
 }
 
-.card-front em {
-  color: var(--text-dim);
+.pick-cta-arrow {
+  font: 700 13px / 1 var(--font-mono);
 }
 
-.card-back {
-  background: linear-gradient(160deg, var(--accent), #4a2fd4);
-  transform: rotateY(180deg);
-  border: 1px solid var(--accent);
-  box-shadow: var(--glow);
-  color: #fff;
-}
-
-.card.picked .card-inner {
-  transform: rotateY(180deg);
-}
-
-.card.dim {
-  opacity: 0.25;
-  transition: opacity 0.4s;
+.pick-hint {
+  padding: 19px 0;
+  text-align: center;
+  font: 400 var(--fs-sm) / 1.8 var(--font-sans);
+  letter-spacing: 0.04em;
+  color: var(--ink-30);
 }

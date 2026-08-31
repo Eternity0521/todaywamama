@@ -1,69 +1,183 @@
-/* 翻牌揭晓页（指导书 §7.3） */
+/* 翻牌揭晓页（设计稿 reveal 屏：卡面 + 星 + 大字 + 宜/忌双栏） */
+
 .reveal {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px 20px;
+}
+
+.reveal-inner {
+  width: 100%;
+  max-width: 390px;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+  animation: revealRise 0.45s ease both;
+}
+
+@keyframes revealRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 头部 */
+.reveal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font: 700 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.16em;
+  color: var(--acc-55);
+}
+
+.reveal-date {
+  color: var(--ink-30);
+  letter-spacing: 0.06em;
+}
+
+/* 卡面 + 星级 */
+.reveal-stage {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  gap: var(--sp-6);
-  padding: var(--sp-5);
-  text-align: center;
+  gap: 18px;
+  min-height: 0;
+  padding: 16px 0;
 }
 
-.reveal-card {
-  width: min(300px, 80vw);
-  padding: var(--sp-6) var(--sp-5);
-  background: var(--card);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  box-shadow: var(--glow);
-  animation: flipIn 0.7s both;
+.reveal-card-img {
+  width: 158px;
+  height: 281px;
+  object-fit: contain;
+  display: block;
+  border: 1px solid var(--acc-55);
+  box-shadow: 0 24px 60px -22px var(--acc-55);
+  flex: none;
+  animation: revealFlipIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
-.reveal-title {
-  margin-top: var(--sp-4);
-  font-size: var(--fs-xl);
-  font-weight: 800;
-}
-
-.reveal-desc {
-  margin-top: var(--sp-3);
-  color: var(--text-dim);
-  font-size: var(--fs-md);
-  line-height: 1.7;
-}
-
-.reveal-cta {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 14px 40px;
-  font-size: var(--fs-md);
-  font-weight: 700;
-  box-shadow: var(--glow);
-  cursor: pointer;
-  animation: fadeUp 0.4s both;
-}
-
-@keyframes flipIn {
+@keyframes revealFlipIn {
   from {
     transform: rotateY(90deg);
     opacity: 0;
   }
   to {
-    transform: rotateY(0deg);
+    transform: rotateY(0);
     opacity: 1;
   }
 }
 
-@keyframes fadeUp {
-  from {
-    transform: translateY(12px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.reveal-stars {
+  display: flex;
+  gap: 5px;
+}
+
+/* 正文 */
+.reveal-title {
+  font: 900 var(--fs-display) / 1.1 var(--font-sans);
+  color: #f7f3fa;
+  letter-spacing: -0.03em;
+}
+
+.reveal-desc {
+  margin-top: 16px;
+  font: 400 var(--fs-base) / 1.85 var(--font-sans);
+  color: var(--ink-60);
+  text-wrap: pretty;
+}
+
+/* 宜/忌双栏 */
+.reveal-yj {
+  margin-top: 20px;
+  display: flex;
+  border: 1px solid var(--ink-14);
+}
+
+.reveal-yj-cell {
+  flex: 1;
+  padding: 16px 16px 18px;
+  min-width: 0;
+}
+
+.reveal-yj-cell + .reveal-yj-cell {
+  border-left: 1px solid var(--ink-14);
+}
+
+.reveal-yj-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 500 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.14em;
+  color: var(--ink-45);
+}
+
+.reveal-yj-badge {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 900 var(--fs-xs) / 1 var(--font-sans);
+  flex: none;
+}
+
+.reveal-yj-badge-good {
+  background: var(--acc);
+  color: var(--btn-ink);
+}
+
+.reveal-yj-badge-bad {
+  border: 1px solid var(--ink-30);
+  color: var(--ink-45);
+}
+
+.reveal-yj-text {
+  margin-top: 12px;
+  font: 700 17px / 1.5 var(--font-sans);
+  color: var(--ink);
+}
+
+.reveal-yj-text-bad {
+  color: var(--ink-60);
+}
+
+/* CTA */
+.reveal-cta {
+  margin-top: 20px;
+  width: 100%;
+  height: 54px;
+  background: var(--acc);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  font: 800 15.5px / 1 var(--font-sans);
+  color: var(--btn-ink);
+  cursor: pointer;
+  border: none;
+  transition: filter 0.15s, transform 0.1s;
+}
+
+.reveal-cta:hover {
+  filter: brightness(1.08);
+}
+
+.reveal-cta:active {
+  transform: scale(0.985);
+}
+
+.reveal-cta-arrow {
+  font: 700 13px / 1 var(--font-mono);
 }

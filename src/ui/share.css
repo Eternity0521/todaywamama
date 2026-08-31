@@ -1,76 +1,181 @@
-/* 分享卡页面（指导书 §7.5） */
+/* 分享卡页（设计稿 share 屏） */
+
 .share {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 32px 20px;
+}
+
+.share-inner {
+  width: 100%;
+  max-width: 390px;
   display: flex;
   flex-direction: column;
+  min-height: calc(100vh - 64px);
+  animation: shareRise 0.4s ease both;
+}
+
+@keyframes shareRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 头部：返回 + 标签 */
+.share-head {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  min-height: 100vh;
-  padding: var(--sp-5) var(--sp-4) calc(var(--sp-5) + env(safe-area-inset-bottom));
-  gap: var(--sp-4);
 }
 
-.share-img {
-  width: 100%;
-  max-width: 340px;
-  border-radius: var(--radius);
-  box-shadow: var(--glow);
-}
-
-.share-loading {
-  width: 100%;
-  max-width: 340px;
-  aspect-ratio: 5 / 7;
+.share-back {
+  width: 44px;
+  height: 44px;
+  margin-left: -14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--card);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  color: var(--text-dim);
-  font-size: var(--fs-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-45);
+  transition: color 0.15s;
 }
 
-.share-hint {
-  color: var(--text-dim);
-  font-size: var(--fs-xs);
+.share-back:hover {
+  color: var(--ink);
 }
 
+.share-step {
+  font: 700 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.16em;
+  color: var(--acc-55);
+}
+
+/* 预览 */
+.share-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0;
+  min-height: 0;
+}
+
+.share-img {
+  max-width: min(320px, 78vw);
+  max-height: 62vh;
+  width: auto;
+  height: auto;
+  display: block;
+  border: 1px solid var(--acc-55);
+  box-shadow: 0 30px 60px -28px var(--acc-30);
+  object-fit: contain;
+}
+
+.share-loading {
+  aspect-ratio: 9 / 16;
+  max-height: 62vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ink-14);
+  font: 400 var(--fs-base) / 1 var(--font-sans);
+  color: var(--ink-45);
+}
+
+/* 操作按钮 */
 .share-actions {
+  flex: none;
   display: flex;
   flex-direction: column;
-  gap: var(--sp-3);
-  width: 100%;
-  max-width: 340px;
+  gap: 9px;
 }
 
 .share-btn {
-  border-radius: 999px;
-  padding: 13px 0;
-  font-size: var(--fs-md);
-  font-weight: 700;
   cursor: pointer;
+  transition: filter 0.15s, transform 0.1s, background 0.15s, border-color 0.15s;
 }
 
 .share-btn.primary {
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #fff;
+  height: 54px;
+  background: var(--acc);
   border: none;
-  box-shadow: var(--glow);
+  font: 800 var(--fs-lg) / 1 var(--font-sans);
+  color: var(--btn-ink);
 }
 
-.share-btn.ghost,
-.share-btn:not(.primary):not(.ghost) {
-  background: var(--card);
-  border: 1px solid var(--card-border);
-  color: var(--text);
+.share-btn.primary:hover {
+  filter: brightness(1.08);
+}
+
+.share-btn.secondary {
+  height: 46px;
+  background: none;
+  border: 1px solid var(--acc-55);
+  font: 700 var(--fs-base) / 1 var(--font-sans);
+  color: var(--acc);
+}
+
+.share-btn.secondary:hover {
+  background: var(--acc-08);
 }
 
 .share-btn.ghost {
-  font-weight: 500;
-  color: var(--text-dim);
+  height: 34px;
+  background: none;
+  border: none;
+  font: 400 var(--fs-sm) / 1 var(--font-sans);
+  color: var(--ink-30);
 }
 
+.share-btn.ghost:hover {
+  color: var(--ink-60);
+}
+
+.share-btn:active {
+  transform: scale(0.985);
+}
+
+/* toast（设计稿：浅底反色胶囊） */
 .share-toast {
-  color: var(--accent-2);
-  font-size: var(--fs-sm);
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 104px;
+  max-width: 86vw;
+  background: var(--ink);
+  color: var(--on-light);
+  padding: 11px 18px;
+  font: 700 12.5px / 1.5 var(--font-sans);
   text-align: center;
+  box-shadow: 0 12px 30px -12px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  z-index: 10;
+  animation: shareToast 2s ease both;
+}
+
+@keyframes shareToast {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  12% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }

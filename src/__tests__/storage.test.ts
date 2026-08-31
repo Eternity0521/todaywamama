@@ -19,7 +19,7 @@ function makeFortune(userId: string, date: string): DailyFortune {
     date,
     userId,
     reroll: 0,
-    main: { stars: 4, title: '状态在线', desc: '测试描述' },
+    main: { stars: 4, cardId: 'card-01', cardName: '注意协作', title: '别单走', desc: '测试描述', good: '宜报点', bad: '忌单摸' },
     position: {
       primary: 'controller',
       scores: { duelist: 2, initiator: 3, controller: 5, sentinel: 4 },

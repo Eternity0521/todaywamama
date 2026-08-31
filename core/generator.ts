@@ -9,6 +9,7 @@ import type {
   Advice,
   DailyFortune,
   HeroFortune,
+  MainLuck,
   MapFortune,
   PositionFortune,
   Role,
@@ -23,7 +24,7 @@ import { WEAPON_POOL } from './content/weapons';
 import { BUDDIES, SKIN_POOL } from './content/skins';
 import { MAP_LABELS, MAP_POOL } from './content/maps';
 import { ADVICE_POOL } from './content/advice';
-import { MAIN_LUCK } from './content/mainLuck';
+import { CARD_POOL, type CardEntry } from './content/cards';
 import type { FortuneStore } from './store';
 
 export const ROLES: Role[] = ['duelist', 'initiator', 'controller', 'sentinel'];
@@ -34,6 +35,41 @@ export const STAR_WEIGHTS: Record<Star, number> = { 1: 4, 2: 16, 3: 30, 4: 32, 5
 /** 每日种子串 → PRNG 种子（指导书 §5.1；改命追加 |r1） */
 export function seedFor(userId: string, date: string, reroll: 0 | 1): number {
   return xmur3(`${userId}|${date}${reroll === 1 ? '|r1' : ''}`);
+}
+
+/**
+ * 卡面抽取（指导书 §5.2）：独立确定性流，与主 RNG 完全隔离。
+ * 同 (userId, date, reroll) 恒返回同一张卡；改命（reroll=1）自动换流重抽。
+ */
+export function cardFor(userId: string, date: string, reroll: 0 | 1): CardEntry {
+  const seed = xmur3(`${userId}|${date}${reroll === 1 ? '|r1' : ''}|card`);
+  return pick(mulberry32(seed), CARD_POOL);
+}
+
+/**
+ * 旧数据补齐（UI 融合迁移）：旧结构 main 无 cardId 时，按运势自身参数
+ * 精确补算卡面字段。幂等、确定性、无副作用，可重复调用。
+ * 旧结构只存在于存量 localStorage 数据中（类型系统里不存在），
+ * 故用 LegacyMain 显式处理。
+ */
+type LegacyMain = Omit<MainLuck, 'cardId' | 'cardName' | 'good' | 'bad'>;
+
+export function backfillMainCard(f: DailyFortune): DailyFortune {
+  const main = f.main as LegacyMain;
+  if ('cardId' in main) return f;
+  const c = cardFor(f.userId, f.date, f.reroll);
+  return {
+    ...f,
+    main: {
+      ...main,
+      cardId: c.id,
+      cardName: c.name,
+      title: c.title,
+      desc: c.read,
+      good: c.good,
+      bad: c.bad,
+    },
+  };
 }
 
 /** 特殊事件钩子（指导书 §5.3）：P0 恒返回 null，P1 接入（如赛季/节日加成） */
@@ -77,13 +113,12 @@ export function genDailyFortune(
     .slice(0, 7);
 
   // ===== 以下抽取顺序固定，不可调整 =====
-  // 1. 主运（§5.2）
+  // 1. 主运星级（§5.2）
   const stars = weightedPick(
     rng,
     ROLES.map((_, i) => (i + 1) as Star),
     ROLES.map((_, i) => STAR_WEIGHTS[(i + 1) as Star]),
   );
-  const main = { stars, title: pick(rng, MAIN_LUCK[stars].titles), desc: pick(rng, MAIN_LUCK[stars].descs) };
 
   // 2. 幸运位置（§5.3）
   const position = genPosition(rng, date, history);
@@ -103,6 +138,18 @@ export function genDailyFortune(
   // 7. 今日 Advice（§5.8）
   const advice = genAdvice(rng, history);
   // ===== 抽取顺序结束 =====
+
+  // 8. 卡面（§5.2）：独立种子流，不消耗主 RNG（不扰动既有 7 步抽取）
+  const card = cardFor(userId, date, reroll);
+  const main = {
+    stars,
+    cardId: card.id,
+    cardName: card.name,
+    title: card.title,
+    desc: card.read,
+    good: card.good,
+    bad: card.bad,
+  };
 
   return { date, userId, reroll, main, position, hero, weapon, skin, maps, advice };
 }

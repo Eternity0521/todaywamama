@@ -10,3 +10,10 @@ export function formatKeyCN(key: string): string {
   const [y, m, d] = key.split('-');
   return `${y} / ${m} / ${d}`;
 }
+
+const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
+
+/** 设计稿日期格式：8月23日 星期日 */
+export function formatDateShortCN(d: Date): string {
+  return `${d.getMonth() + 1}月${d.getDate()}日 星期${WEEKDAYS[d.getDay()]}`;
+}

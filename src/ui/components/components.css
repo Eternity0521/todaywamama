@@ -1,4 +1,4 @@
-/* 通用小组件样式（Stars / SectionCard） */
+/* 通用小组件样式（Stars / SectionCard）——设计稿：紫色星、小标签标题 */
 
 .stars {
   display: inline-flex;
@@ -11,8 +11,7 @@
 }
 
 .star-on {
-  color: var(--gold);
-  text-shadow: var(--glow-gold);
+  color: var(--star-on);
 }
 
 .star-off {
@@ -46,20 +45,17 @@
   }
 }
 
+/* SectionCard：设计稿小标签风格（icon prop 已退役） */
 .section-card {
-  background: var(--card);
-  border: 1px solid var(--card-border);
+  background: var(--panel);
+  border: 1px solid var(--ink-14);
   border-radius: var(--radius);
   padding: var(--sp-4);
 }
 
 .section-title {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  color: var(--text-dim);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font: 500 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.14em;
+  color: var(--ink-45);
   margin-bottom: var(--sp-3);
 }

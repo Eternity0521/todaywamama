@@ -1,32 +1,49 @@
 /* ============================================================
-   设计 token（指导书 §8）：深色电竞风。
+   设计 token（指导书 §8）：电竞终端数据感 · 霓虹紫。
+   来源：美术设计稿「Daily Valorant Fortune」（design/unpacked/）。
    页面样式只允许引用 token，禁止写死色值。
    ============================================================ */
 :root {
-  /* 色板 */
-  --bg: #0a0e1a;
-  --bg-elevated: #10152a;
-  --card: #151c38;
-  --card-border: #232c4d;
-  --accent: #7c5cff;      /* 霓虹紫 */
-  --accent-2: #2dd4bf;    /* 青 */
-  --gold: #ffc94d;        /* 星级金 */
-  --star-off: #38415f;    /* 未点亮星 */
-  --text: #e8ecf8;
-  --text-dim: #8b94b3;
-  --danger: #ff5470;
+  /* 色板（设计稿 oklch 已换算为 sRGB，Canvas 分享卡共用同一批常量） */
+  --bg: #0c0910;                    /* 应用底 */
+  --bg-page: #0a0810;               /* body 底 */
+  --panel: #130f1a;                 /* 面板底 */
+  --panel-2: #1b1424;               /* 卡背渐变上沿 */
+  --acc: #c084d8;                   /* 霓虹紫（oklch(0.72 0.19 300)） */
+  --acc-04: rgba(192, 132, 216, 0.04); /* 网格线 */
+  --acc-08: rgba(192, 132, 216, 0.08); /* 扫描线 / 渐变面板 */
+  --acc-16: rgba(192, 132, 216, 0.16); /* 圆环 / 背景点缀 */
+  --acc-30: rgba(192, 132, 216, 0.3);  /* 描边 / 弱强调 */
+  --acc-55: rgba(192, 132, 216, 0.55); /* 强描边 / 发光 */
+  --acc-deep: #5f2f6b;              /* oklch(0.42 0.16 322)：雷区 / 深强调 */
+  --ink: #ece7f2;
+  --ink-60: rgba(236, 231, 242, 0.6);  /* 正文 */
+  --ink-45: rgba(236, 231, 242, 0.45); /* 次级文字 */
+  --ink-30: rgba(236, 231, 242, 0.3);  /* 弱标签 / 日期 */
+  --ink-14: rgba(236, 231, 242, 0.14); /* 边框 / 分隔 */
+  --btn-ink: #170e1c;               /* 紫底按钮上的深字 */
+  --on-light: #0c0910;              /* 浅底反色块上的字 */
 
-  /* 字体 */
-  --font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  /* 星级（设计稿：紫色实心 + acc-30 描边空心） */
+  --star-on: var(--acc);
+  --star-off: rgba(192, 132, 216, 0.3);
 
-  /* 字号 */
-  --fs-xs: 12px;
-  --fs-sm: 14px;
-  --fs-md: 16px;
-  --fs-lg: 20px;
-  --fs-xl: 28px;
-  --fs-xxl: 40px;
+  /* 字体（设计稿 Noto Sans SC + JetBrains Mono，系统 fallback 兜底） */
+  --font-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
+
+  /* 字号（设计稿驱动的新刻度） */
+  --fs-2xs: 10px;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13.5px;
+  --fs-base: 14px;
+  --fs-lg: 16px;
+  --fs-xl: 22px;
+  --fs-2xl: 36px;
+  --fs-hero: 42px;
+  --fs-display: 46px;
+  --fs-xxl: 40px; /* 旧刻度别名（过渡用） */
 
   /* 间距 */
   --sp-1: 4px;
@@ -36,11 +53,22 @@
   --sp-5: 24px;
   --sp-6: 32px;
 
-  /* 圆角与阴影 */
-  --radius: 16px;
-  --radius-sm: 10px;
-  --glow: 0 0 24px rgba(124, 92, 255, 0.35);
-  --glow-gold: 0 0 24px rgba(255, 201, 77, 0.3);
+  /* 全直角（设计稿无圆角） */
+  --radius: 0px;
+  --radius-sm: 0px;
+
+  /* 阴影 */
+  --glow: 0 0 44px -8px rgba(192, 132, 216, 0.3);
+
+  /* 旧 token 别名（页面重绘期间过渡用，M3 完成后随旧 CSS 一并移除） */
+  --bg-elevated: var(--panel-2);
+  --card: var(--panel);
+  --card-border: var(--acc-30);
+  --accent-2: var(--acc);
+  --gold: var(--acc);
+  --text: var(--ink);
+  --text-dim: var(--ink-45);
+  --danger: #ff5470;
 }
 
 * {
@@ -51,9 +79,9 @@
 
 html,
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-stack);
+  background: var(--bg-page);
+  color: var(--ink);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -64,6 +92,38 @@ body {
 
 button {
   font-family: inherit;
+}
+
+/* 全局氛围：26px 网格底 + 9s 扫描线（挂在 App 顶层 overlay 上） */
+.app-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: linear-gradient(var(--acc-04) 1px, transparent 1px),
+    linear-gradient(90deg, var(--acc-04) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+.app-scanline {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 140px;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--acc-08), transparent);
+  animation: vScan 9s linear infinite;
+}
+
+@keyframes vScan {
+  from {
+    transform: translateY(-140px);
+  }
+  to {
+    transform: translateY(100vh);
+  }
 }
 
 /* 无障碍：用户偏好减弱动画时全局降级（指导书 §7.3） */

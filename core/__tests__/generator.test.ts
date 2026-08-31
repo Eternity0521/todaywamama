@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   ROLES,
   STAR_WEIGHTS,
+  backfillMainCard,
+  cardFor,
   computePositionWeights,
   genDailyFortune,
   getOrCreateToday,
@@ -9,6 +11,7 @@ import {
   seedFor,
   yesterdayFortune,
 } from '../generator';
+import { CARD_POOL } from '../content/cards';
 import { mulberry32, weightedPick } from '../random';
 import { dateKey } from '../date';
 import type { DailyFortune, Star } from '../types';
@@ -182,5 +185,36 @@ describe('流程编排（指导书 §5.9/§5.10）', () => {
     store.save(f);
     expect(yesterdayFortune('u1', store)).toEqual(f);
     expect(yesterdayFortune('u2', store)).toBeNull();
+  });
+});
+
+describe('卡面（指导书 §5.2，UI 融合）', () => {
+  it('cardFor：同参恒返回同一张卡，改命换流', () => {
+    const a = cardFor('u1', '2026-08-23', 0);
+    const b = cardFor('u1', '2026-08-23', 0);
+    expect(a).toEqual(b);
+    expect(cardFor('u1', '2026-08-23', 1)).not.toEqual(a);
+    expect(cardFor('u2', '2026-08-23', 0)).not.toEqual(a);
+  });
+
+  it('生成的主运卡面字段与卡面池一致', () => {
+    const f = genDailyFortune('u1', '2026-08-23', 0, memStore());
+    const card = CARD_POOL.find((c) => c.id === f.main.cardId);
+    expect(card).toBeDefined();
+    expect(f.main.cardName).toBe(card!.name);
+    expect(f.main.title).toBe(card!.title);
+    expect(f.main.desc).toBe(card!.read);
+    expect(f.main.good).toBe(card!.good);
+    expect(f.main.bad).toBe(card!.bad);
+  });
+
+  it('backfillMainCard：旧结构补齐且幂等', () => {
+    const f = genDailyFortune('u1', '2026-08-23', 0, memStore());
+    const old = { ...f, main: { stars: f.main.stars, title: '旧标题', desc: '旧描述' } } as unknown as DailyFortune;
+    const filled = backfillMainCard(old);
+    expect(filled.main.cardId).toBe(cardFor('u1', '2026-08-23', 0).id);
+    expect(filled.main.title).not.toBe('旧标题');
+    expect(backfillMainCard(filled)).toBe(filled); // 已有 cardId 原样返回
+    expect(backfillMainCard(filled)).toEqual(filled);
   });
 });
