@@ -4,7 +4,6 @@ import './home.css';
 
 interface Props {
   today: DailyFortune | null;
-  yesterday: DailyFortune | null;
   onStart: () => void;
 }
 
@@ -31,9 +30,9 @@ function CardBackSvg({ dim = false }: { dim?: boolean }) {
   );
 }
 
-/** 首页「今日瓦运」（指导书 §7.1，PRD §08/§11）——设计稿 home 屏版式 */
-export default function Home({ today, yesterday, onStart }: Props) {
-  const isFirst = !today && !yesterday;
+/** 首页「今日瓦运」（设计稿 isHome 屏：两种状态——今天没测过 / 今天已测过） */
+export default function Home({ today, onStart }: Props) {
+  const drawn = today !== null;
 
   return (
     <main className="home">
@@ -45,13 +44,6 @@ export default function Home({ today, yesterday, onStart }: Props) {
           </div>
           <p className="home-date">{formatDateShortCN(new Date())}</p>
         </header>
-
-        {!isFirst && yesterday && (
-          <p className="home-yesterday">
-            昨日 · {yesterday.advice.keyword} ｜{'★'.repeat(yesterday.main.stars)}
-            {'☆'.repeat(5 - yesterday.main.stars)}
-          </p>
-        )}
 
         <div className="home-cards" aria-hidden="true">
           <div className="card-back card-back-side-l">
@@ -66,19 +58,32 @@ export default function Home({ today, yesterday, onStart }: Props) {
         </div>
 
         <div className="home-slogan">
-          <h2>今天这把，<br />有说法。</h2>
-          <p>{isFirst ? '抽张卡牌，看看你的今日游戏运势。' : '昨日已读档，今天抽张新的。'}</p>
+          {drawn ? (
+            <>
+              <h2>
+                今天的牌，
+                <br />
+                已经翻开。
+              </h2>
+              <p>一天一卦，明天 0 点后可以再来。</p>
+            </>
+          ) : (
+            <>
+              <h2>
+                今天这把，
+                <br />
+                有说法。
+              </h2>
+              <p>抽张卡牌，看看你的今日游戏运势。</p>
+            </>
+          )}
         </div>
 
         <div className="home-actions">
           <button className="home-cta" type="button" onClick={onStart}>
-            <span>测测今日瓦运</span>
+            <span>{drawn ? '查看今日运势' : '测测今日瓦运'}</span>
             <span className="home-cta-arrow">→</span>
           </button>
-          <div className="home-secondary">
-            <button type="button" onClick={onStart}>今天用哪套皮肤？</button>
-            <button type="button" onClick={onStart}>给队友算一卦</button>
-          </div>
         </div>
 
         <footer className="home-footer">仅供娱乐 · 非官方产品</footer>

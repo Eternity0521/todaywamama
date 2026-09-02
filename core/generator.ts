@@ -21,7 +21,7 @@ import { mulberry32, pick, randInt, shuffle, weightedPick, xmur3, type Rng } fro
 import { dateKey, todayKey } from './date';
 import { HEROES_BY_ROLE, POSITION_REASONS } from './content/heroes';
 import { WEAPON_POOL } from './content/weapons';
-import { BUDDIES, SKIN_POOL } from './content/skins';
+import { BUDDIES, COLOR_CATEGORIES } from './content/skins';
 import { MAP_LABELS, MAP_POOL } from './content/maps';
 import { ADVICE_POOL } from './content/advice';
 import { CARD_POOL, type CardEntry } from './content/cards';
@@ -133,7 +133,7 @@ export function genDailyFortune(
   const skin = genSkin(rng);
 
   // 6. 幸运地图（§5.7）
-  const maps = genMaps(rng);
+  const map = genMap(rng);
 
   // 7. 今日 Advice（§5.8）
   const advice = genAdvice(rng, history);
@@ -151,7 +151,7 @@ export function genDailyFortune(
     bad: card.bad,
   };
 
-  return { date, userId, reroll, main, position, hero, weapon, skin, maps, advice };
+  return { date, userId, reroll, main, position, hero, weapon, skin, map, advice };
 }
 
 /** 取当日运势：已存在则直接返回（PRD §26 一致性），否则生成并保存 */
@@ -220,33 +220,42 @@ function genHero(rng: Rng, role: Role, history: DailyFortune[]): HeroFortune {
   };
 }
 
+/** 「幸运XX」专用星级：只在 4–5 星浮动——既然叫幸运，就不该抽到差评（PRD §16/§18） */
+function genLuckyStar(rng: Rng): Star {
+  return weightedPick(rng, [4, 5] as Star[], [STAR_WEIGHTS[4], STAR_WEIGHTS[5]]);
+}
+
 function genWeapon(rng: Rng): WeaponFortune {
-  const weapon = pick(rng, WEAPON_POOL);
+  const weapon = weightedPick(rng, WEAPON_POOL, WEAPON_POOL.map((w) => w.weight));
   const avoid = pick(rng, WEAPON_POOL.filter((w) => w.id !== weapon.id));
+  const stars = genLuckyStar(rng);
   return {
     id: weapon.id,
+    stars,
     reason: pick(rng, weapon.reasons),
     avoid: { id: avoid.id, reason: pick(rng, avoid.avoidReasons) },
   };
 }
 
 function genSkin(rng: Rng): SkinFortune {
-  const skin = pick(rng, SKIN_POOL);
+  const category = pick(rng, COLOR_CATEGORIES);
+  const color = pick(rng, category.names);
+  const blurb = pick(rng, category.blurbs);
+  const count = randInt(rng, 2, 3);
+  const skins = shuffle(rng, category.skins).slice(0, count);
   return {
-    id: skin.id,
+    skins,
     match: randInt(rng, 90, 98),
-    color: pick(rng, skin.colors),
+    color,
     buddy: pick(rng, BUDDIES),
-    blurb: pick(rng, skin.blurbs),
+    blurb,
   };
 }
 
-function genMaps(rng: Rng): MapFortune[] {
-  const stars = shuffle(rng, [5, 4, 3, 2, 1] as Star[]);
-  const maps = shuffle(rng, MAP_POOL);
-  return maps
-    .map((m, i) => ({ id: m.id, stars: stars[i], label: pick(rng, MAP_LABELS[stars[i]]) }))
-    .sort((a, b) => b.stars - a.stars); // 降序：[0] = 幸运地图，[last] = 今日雷区
+function genMap(rng: Rng): MapFortune {
+  const map = pick(rng, MAP_POOL);
+  const stars = genLuckyStar(rng);
+  return { id: map.id, stars, label: pick(rng, MAP_LABELS[stars]) };
 }
 
 function genAdvice(rng: Rng, history: DailyFortune[]): Advice {

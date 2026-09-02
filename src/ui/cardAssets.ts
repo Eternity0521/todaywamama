@@ -17,8 +17,3 @@ for (const [path, url] of Object.entries(cardImgs)) {
 export function cardImageUrl(cardId: string): string {
   return CARD_IMG_BY_ID[cardId] ?? '';
 }
-
-import omenBust from '../assets/hero/omen-bust.webp';
-import omenHead from '../assets/hero/omen-head.webp';
-
-export { omenBust, omenHead };

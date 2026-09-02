@@ -11,11 +11,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "html-to-image": "^1.11.13",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@napi-rs/canvas": "^1.0.7",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",

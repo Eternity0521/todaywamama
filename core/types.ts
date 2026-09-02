@@ -38,20 +38,21 @@ export interface HeroFortune {
 /** 幸运武器（PRD §16） */
 export interface WeaponFortune {
   id: string;
+  stars: Star; // 独立随机 1–5，不与其他武器排名比较
   reason: string;
   avoid: { id: string; reason: string }; // 今日不推荐
 }
 
-/** 幸运皮肤（PRD §17） */
+/** 幸运皮肤（PRD §17，模式 B：按色系抽 2–3 个推荐皮肤） */
 export interface SkinFortune {
-  id: string;
+  skins: string[]; // 该色系随机抽的 2-3 个推荐皮肤（国服译名）
   match: number; // 契合度 90–98
   color: string; // 幸运颜色，如「绿色」
   buddy: string; // 幸运饰品，如「RGX Butterfly」
   blurb: string; // 例：「今天科技感会给你一点额外的自信。」
 }
 
-/** 地图运势（PRD §18） */
+/** 幸运地图（PRD §18）：独立随机 1–5 星，不再和其余地图比较排名 */
 export interface MapFortune {
   id: string;
   stars: Star;
@@ -74,6 +75,6 @@ export interface DailyFortune {
   hero: HeroFortune;
   weapon: WeaponFortune;
   skin: SkinFortune;
-  maps: MapFortune[]; // 按星级降序；[0] = 幸运地图，[last] = 今日雷区
+  map: MapFortune;
   advice: Advice;
 }

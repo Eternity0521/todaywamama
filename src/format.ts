@@ -17,3 +17,15 @@ const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六'];
 export function formatDateShortCN(d: Date): string {
   return `${d.getMonth() + 1}月${d.getDate()}日 星期${WEEKDAYS[d.getDay()]}`;
 }
+
+/** 'YYYY-MM-DD' → 8月23日（分享卡等无需星期的场景） */
+export function formatDateMD(key: string): string {
+  const [, m, d] = key.split('-');
+  return `${Number(m)}月${Number(d)}日`;
+}
+
+/** 「Phantom（幻影）」→「幻影」；无括号则原样返回（设计稿仅展示中文名） */
+export function extractCN(name: string): string {
+  const m = name.match(/[（(]([^）)]+)[）)]/);
+  return m ? m[1] : name;
+}

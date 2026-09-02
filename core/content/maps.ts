@@ -8,10 +8,14 @@ export interface MapEntry {
 
 export const MAP_POOL: MapEntry[] = [
   { id: 'Ascent', name: 'Ascent（亚海悬城）' },
-  { id: 'Haven', name: 'Haven（避风港湾）' },
-  { id: 'Bind', name: 'Bind（极地寒港）' },
-  { id: 'Lotus', name: 'Lotus（莲花古城）' },
+  { id: 'Haven', name: 'Haven（隐世修所）' },
+  { id: 'Bind', name: 'Bind（源工重镇）' },
+  { id: 'Lotus', name: 'Lotus（莲华古城）' },
   { id: 'Breeze', name: 'Breeze（微风岛屿）' },
+  { id: 'Fracture', name: 'Fracture（裂变峡谷）' },
+  { id: 'Icebox', name: 'Icebox（森寒冬港）' },
+  { id: 'Pearl', name: 'Pearl（深海明珠）' },
+  { id: 'Split', name: 'Split（霓虹町）' },
 ];
 
 /** 各星级评语池 */

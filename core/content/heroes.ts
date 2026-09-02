@@ -3,7 +3,7 @@ import type { Role } from '../types';
 /** 英雄条目（指导书 §6.1）。id 为跨文件引用 key。 */
 export interface HeroEntry {
   id: string;
-  name: string;       // 展示名（英文为主，附最常用昵称）
+  name: string;       // 展示名（英文 + 国服官方译名，与 core/content/agents.ts 保持一致）
   role: Role;
   keywords: string[]; // 3–5 个风格关键词
   blurbs: string[];   // 2–3 条趣味解释（游戏梗风格）
@@ -43,7 +43,7 @@ export const HEROES: HeroEntry[] = [
     id: 'Jett',
     name: 'Jett（捷风）',
     role: 'duelist',
-    keywords: ['拉枪线', '机动', '空摘'],
+    keywords: ['拉枪线', '机动', '接刀'],
     blurbs: [
       '今天你的位移会快过对面的准星——但别把队友甩在后面。',
       '风一样的女人，今天适合把节奏带起来，第一个进点的可以是你。',
@@ -53,7 +53,7 @@ export const HEROES: HeroEntry[] = [
     id: 'Raze',
     name: 'Raze（雷兹）',
     role: 'duelist',
-    keywords: ['爆破', '快乐', '雷王'],
+    keywords: ['爆破', '莽', '雷王'],
     blurbs: [
       '今天你扔出去的东西都会响。别忘了有些是留给自己的。',
       '别问，问就是炸。今天让对面体验一下什么叫雷区蹦迪。',
@@ -61,9 +61,9 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Reyna',
-    name: 'Reyna（蕾娜）',
+    name: 'Reyna（芮娜）',
     role: 'duelist',
-    keywords: ['残局', '连杀', '自我'],
+    keywords: ['残局', '连杀', '独狼'],
     blurbs: [
       '今天残局有说法，但你得先拿到第一滴血。',
       '你的状态越好，她的能量越足。今天适合一个人把局面打穿。',
@@ -71,11 +71,11 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Phoenix',
-    name: 'Phoenix（火男）',
+    name: 'Phoenix（不死鸟）',
     role: 'duelist',
-    keywords: ['自奶', '火墙', '高闪'],
+    keywords: ['回血', '纵火', '莽撞'],
     blurbs: [
-      '火男今天手感在线，记得给自己留个闪。',
+      '不死鸟今天手感在线，记得给自己留个闪。',
       '今天适合打得像太阳一样耀眼——但别把自己闪了。',
     ],
   },
@@ -83,7 +83,7 @@ export const HEROES: HeroEntry[] = [
     id: 'Yoru',
     name: 'Yoru（夜露）',
     role: 'duelist',
-    keywords: ['偷人', '分神', '传送'],
+    keywords: ['诱敌', '分神', '鬼祟'],
     blurbs: [
       '今天声东击西有奇效，对面永远猜不到你在哪。',
       '夜露的玩法就是让对面以为你在这里。今天你的戏可以多一点。',
@@ -93,7 +93,7 @@ export const HEROES: HeroEntry[] = [
     id: 'Neon',
     name: 'Neon（霓虹）',
     role: 'duelist',
-    keywords: ['速度', '冲锋', '电能'],
+    keywords: ['速度', '冲锋', '莽'],
     blurbs: [
       '今天你的手速快过脑速，冲之前先看清有几个枪口。',
       '闪电侠附体，今天适合把节奏拉到对面喘不过气。',
@@ -101,7 +101,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Iso',
-    name: 'Iso（伊索）',
+    name: 'Iso（壹决）',
     role: 'duelist',
     keywords: ['单挑', '护盾', '冷静'],
     blurbs: [
@@ -111,9 +111,9 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Waylay',
-    name: 'Waylay',
+    name: 'Waylay（幻棱）',
     role: 'duelist',
-    keywords: ['突进', '光线', '追击'],
+    keywords: ['突进', '棱镜', '追击'],
     blurbs: [
       '今天你的突进时机很准，冲进去之前记得让队友补个闪。',
       '光速进场，今天适合打对面一个措手不及。',
@@ -123,9 +123,9 @@ export const HEROES: HeroEntry[] = [
   // ============ 先锋 initiator ============
   {
     id: 'Sova',
-    name: 'Sova（索瓦）',
+    name: 'Sova（猎枭）',
     role: 'initiator',
-    keywords: ['侦查', '箭', '透视'],
+    keywords: ['侦查', '鹰眼', '透视'],
     blurbs: [
       '今天信息会自己送上门，开局一箭先看清三个人。',
       '猎人之眼，今天你看到的东西比别人多——记得说给队友听。',
@@ -133,7 +133,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Breach',
-    name: 'Breach（布雷奇）',
+    name: 'Breach（铁臂）',
     role: 'initiator',
     keywords: ['震地', '闪光', '破点'],
     blurbs: [
@@ -145,7 +145,7 @@ export const HEROES: HeroEntry[] = [
     id: 'Skye',
     name: 'Skye（斯凯）',
     role: 'initiator',
-    keywords: ['治疗', '群闪', '侦查鸟'],
+    keywords: ['治疗', '群闪', '指路'],
     blurbs: [
       '今天你的鹰和狗都比对面清醒，信息流拉满。',
       '带治疗打先锋，今天你就是队伍里最可靠的人。',
@@ -153,9 +153,9 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'KAY/O',
-    name: 'KAY/O（凯欧）',
+    name: 'KAY/O（K/O）',
     role: 'initiator',
-    keywords: ['压制', '沉默', '机器人'],
+    keywords: ['压制', '沉默', '无情'],
     blurbs: [
       '今天让对面的技能闭嘴很有用，他们的大招全憋在手里。',
       '机器人都比你冷静的时候，说明今天状态对了。',
@@ -163,7 +163,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Fade',
-    name: 'Fade（菲德）',
+    name: 'Fade（黑梦）',
     role: 'initiator',
     keywords: ['恐惧', '追踪', '暗影'],
     blurbs: [
@@ -175,7 +175,7 @@ export const HEROES: HeroEntry[] = [
     id: 'Gekko',
     name: 'Gekko（盖可）',
     role: 'initiator',
-    keywords: ['回收', '小怪', '轮转'],
+    keywords: ['回收', '整活', '轮转'],
     blurbs: [
       '今天你的小怪会自己回家，省得你跑去捡。',
       '盖可的快乐就是反复扔，今天适合把技能轮转玩到极致。',
@@ -183,9 +183,9 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Tejo',
-    name: 'Tejo',
+    name: 'Tejo（钛狐）',
     role: 'initiator',
-    keywords: ['导弹', '范围', '压制'],
+    keywords: ['轰炸', '精准', '压制'],
     blurbs: [
       '今天你的导弹指哪打哪，对面只能从角落里爬出来。',
       '空中支援已就位，今天适合让对面先掉一层皮。',
@@ -195,9 +195,9 @@ export const HEROES: HeroEntry[] = [
   // ============ 控场 controller ============
   {
     id: 'Omen',
-    name: 'Omen',
+    name: 'Omen（幽影）',
     role: 'controller',
-    keywords: ['冷静', '信息差', '偷 timing'],
+    keywords: ['冷静', '信息差', '偷时机'],
     blurbs: [
       '今天别人看不到你的时候，往往就是你的机会。',
       '烟雾里的世界归你管，今天适合打信息差。',
@@ -205,7 +205,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Brimstone',
-    name: 'Brimstone（布里姆）',
+    name: 'Brimstone（炼狱）',
     role: 'controller',
     keywords: ['战术', '封烟', '指挥'],
     blurbs: [
@@ -215,7 +215,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Viper',
-    name: 'Viper（薇帕）',
+    name: 'Viper（蝰蛇）',
     role: 'controller',
     keywords: ['毒', '压制', '残局'],
     blurbs: [
@@ -225,7 +225,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Astra',
-    name: 'Astra（亚星卓）',
+    name: 'Astra（星礈）',
     role: 'controller',
     keywords: ['星图', '控制', '大局'],
     blurbs: [
@@ -245,11 +245,11 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Clove',
-    name: 'Clove（克洛芙）',
+    name: 'Clove（暮蝶）',
     role: 'controller',
     keywords: ['不怂', '死后烟', '双闪'],
     blurbs: [
-      '克洛芙最不怕死，今天适合打得凶一点——反正死了还能封烟。',
+      '暮蝶最不怕死，今天适合打得凶一点——反正死了还能封烟。',
       '今天死了也别闲着，你的烟还能帮队友翻盘。',
     ],
   },
@@ -257,9 +257,9 @@ export const HEROES: HeroEntry[] = [
   // ============ 哨卫 sentinel ============
   {
     id: 'Sage',
-    name: 'Sage（奶妈）',
+    name: 'Sage（贤者）',
     role: 'sentinel',
-    keywords: ['治疗', '墙', '复活'],
+    keywords: ['治疗', '守护', '复活'],
     blurbs: [
       '今天队友的命都靠你续，站后面一点比什么都强。',
       '贤者的墙今天立得又直又硬，复活留给最值得的人。',
@@ -267,7 +267,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Cypher',
-    name: 'Cypher（奇乐）',
+    name: 'Cypher（零）',
     role: 'sentinel',
     keywords: ['监控', '陷阱', '情报'],
     blurbs: [
@@ -277,9 +277,9 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Killjoy',
-    name: 'Killjoy（凯宙）',
+    name: 'Killjoy（奇乐）',
     role: 'sentinel',
-    keywords: ['炮塔', '纳米虫', '守点'],
+    keywords: ['科技宅', '陷阱', '守点'],
     blurbs: [
       '今天你的小玩意会把点位守得滴水不漏，人来人亡。',
       '科技宅的胜利，今天适合让对面碰一鼻子灰再送。',
@@ -287,9 +287,9 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Chamber',
-    name: 'Chamber',
+    name: 'Chamber（尚勃勒）',
     role: 'sentinel',
-    keywords: ['手枪', '狙击', '传送'],
+    keywords: ['优雅', '狙击', '秒杀'],
     blurbs: [
       '今天你的手枪打得像步枪，传送永远比对面快一步。',
       '他的高贵今天写在弹道里，第一枪就是警告。',
@@ -297,9 +297,9 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Deadlock',
-    name: 'Deadlock',
+    name: 'Deadlock（钢锁）',
     role: 'sentinel',
-    keywords: ['束缚', '声纳', '守点'],
+    keywords: ['束缚', '钢铁', '守点'],
     blurbs: [
       '今天想跑的人都会被你的网拽回来，一个都别想走。',
       '今天适合把后点变成对面的禁入区。',
@@ -307,7 +307,7 @@ export const HEROES: HeroEntry[] = [
   },
   {
     id: 'Vyse',
-    name: 'Vyse',
+    name: 'Vyse（维斯）',
     role: 'sentinel',
     keywords: ['禁锢', '钩刺', '反打'],
     blurbs: [

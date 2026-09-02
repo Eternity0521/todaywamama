@@ -1,32 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
 import type { DailyFortune } from '../core/types';
 import { todayKey } from '../core/date';
-import { backfillMainCard, getOrCreateToday, rerollToday, yesterdayFortune } from '../core/generator';
+import { backfillMainCard, getOrCreateToday } from '../core/generator';
 import { localStorageStore } from './storage';
+import { loadProfile, saveProfile, type Profile } from './profileStorage';
 import { track } from './analytics';
+import Onboard from './ui/Onboard';
 import Home from './ui/Home';
 import CardPick from './ui/CardPick';
 import FlipReveal from './ui/FlipReveal';
 import FortuneResult from './ui/FortuneResult';
 import ShareCard from './ui/ShareCard';
 
-type Stage = 'home' | 'pick' | 'flip' | 'result' | 'share';
+type Stage = 'onboard' | 'home' | 'pick' | 'flip' | 'result' | 'share';
 
 /**
- * 流程状态机（指导书 §7）：home → pick → flip → result → share。
- * 运势数据只来自 core（getOrCreateToday / rerollToday），UI 不自行生成。
- * 旧数据（无卡面字段）在初始化处经 backfillMainCard 补齐（UI 融合迁移）。
+ * 流程状态机（指导书 §7）：onboard → home → pick → flip → result → share。
+ * 运势数据只来自 core（getOrCreateToday），UI 不自行生成。
+ * 今天已经抽过时，首页直接跳到 flip（设计稿 homeDrawn → goReveal），不用重走一遍抽卡仪式。
  */
 export default function App() {
   const [userId] = useState(() => localStorageStore.getUserId());
-  const [stage, setStage] = useState<Stage>('home');
+  const [profile, setProfile] = useState<Profile>(() => loadProfile());
+  const [stage, setStage] = useState<Stage>(() => (profile.onboarded ? 'home' : 'onboard'));
   const [fortune, setFortune] = useState<DailyFortune | null>(() => {
     const f = localStorageStore.get(userId, todayKey());
     return f ? backfillMainCard(f) : null;
   });
-  const [yesterday] = useState<DailyFortune | null>(() =>
-    yesterdayFortune(userId, localStorageStore),
-  );
   const viewedRef = useRef(false);
 
   useEffect(() => {
@@ -37,12 +37,13 @@ export default function App() {
   }, []);
 
   function handleStart() {
-    track('test_start');
-    // 每次进入都走完整仪式（抽卡 → 卡面解读 → 运势）；已有结果不跳转，
-    // 只在无结果时生成（PRD §26 确定性不受影响：结果逐字段一致）
-    if (!fortune) {
-      setFortune(getOrCreateToday(userId, localStorageStore));
+    if (fortune) {
+      track('view_reveal');
+      setStage('flip');
+      return;
     }
+    track('test_start');
+    setFortune(getOrCreateToday(userId, localStorageStore));
     setStage('pick');
   }
 
@@ -56,20 +57,31 @@ export default function App() {
     setStage('result');
   }
 
-  function handleReroll() {
-    track('reroll_click');
-    const f = rerollToday(userId, localStorageStore);
-    if (f) setFortune(f);
-  }
-
   function handleShare() {
     track('share_open');
     setStage('share');
   }
 
+  function handleOnboardFinish(next: Profile) {
+    track('onboard_finish');
+    saveProfile(next);
+    setProfile(next);
+    setStage('home');
+  }
+
+  function handleOnboardSkip() {
+    track('onboard_skip');
+    const next = { ...profile, onboarded: true };
+    saveProfile(next);
+    setProfile(next);
+    setStage('home');
+  }
+
   let page;
-  if (stage === 'home' || fortune === null) {
-    page = <Home today={fortune} yesterday={yesterday} onStart={handleStart} />;
+  if (stage === 'onboard') {
+    page = <Onboard profile={profile} onFinish={handleOnboardFinish} onSkip={handleOnboardSkip} />;
+  } else if (stage === 'home' || fortune === null) {
+    page = <Home today={fortune} onStart={handleStart} />;
   } else {
     switch (stage) {
       case 'pick':
@@ -82,30 +94,25 @@ export default function App() {
         page = (
           <ShareCard
             fortune={fortune}
+            nickname={profile.nick || undefined}
             onBack={() => setStage('result')}
             onHome={() => setStage('home')}
           />
         );
         break;
       default:
-        page = (
-          <FortuneResult
-            fortune={fortune}
-            canReroll={fortune.reroll === 0}
-            onReroll={handleReroll}
-            onShare={handleShare}
-            onHome={() => setStage('home')}
-          />
-        );
+        page = <FortuneResult fortune={fortune} onShare={handleShare} onHome={() => setStage('home')} />;
     }
   }
 
   return (
-    <>
-      {/* 全局氛围层（设计稿：26px 网格 + 9s 扫描线） */}
-      <div className="app-grid" aria-hidden="true" />
-      <div className="app-scanline" aria-hidden="true" />
-      {page}
-    </>
+    <div className="app-shell">
+      <div className="phone-frame">
+        {/* 全局氛围层（设计稿：26px 网格 + 9s 扫描线） */}
+        <div className="app-grid" aria-hidden="true" />
+        <div className="app-scanline" aria-hidden="true" />
+        {page}
+      </div>
+    </div>
   );
 }

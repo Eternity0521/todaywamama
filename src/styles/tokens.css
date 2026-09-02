@@ -9,13 +9,13 @@
   --bg-page: #0a0810;               /* body 底 */
   --panel: #130f1a;                 /* 面板底 */
   --panel-2: #1b1424;               /* 卡背渐变上沿 */
-  --acc: #c084d8;                   /* 霓虹紫（oklch(0.72 0.19 300)） */
-  --acc-04: rgba(192, 132, 216, 0.04); /* 网格线 */
-  --acc-08: rgba(192, 132, 216, 0.08); /* 扫描线 / 渐变面板 */
-  --acc-16: rgba(192, 132, 216, 0.16); /* 圆环 / 背景点缀 */
-  --acc-30: rgba(192, 132, 216, 0.3);  /* 描边 / 弱强调 */
-  --acc-55: rgba(192, 132, 216, 0.55); /* 强描边 / 发光 */
-  --acc-deep: #5f2f6b;              /* oklch(0.42 0.16 322)：雷区 / 深强调 */
+  --acc: #9a5cf0;                   /* 主紫 */
+  --acc-04: rgba(154, 92, 240, 0.04); /* 网格线 */
+  --acc-08: rgba(154, 92, 240, 0.08); /* 扫描线 / 渐变面板 */
+  --acc-16: rgba(154, 92, 240, 0.16); /* 圆环 / 背景点缀 */
+  --acc-30: rgba(154, 92, 240, 0.3);  /* 描边 / 弱强调 */
+  --acc-55: rgba(154, 92, 240, 0.55); /* 强描边 / 发光 */
+  --acc-deep: #4c2177;              /* 深强调 */
   --ink: #ece7f2;
   --ink-60: rgba(236, 231, 242, 0.6);  /* 正文 */
   --ink-45: rgba(236, 231, 242, 0.45); /* 次级文字 */
@@ -26,7 +26,7 @@
 
   /* 星级（设计稿：紫色实心 + acc-30 描边空心） */
   --star-on: var(--acc);
-  --star-off: rgba(192, 132, 216, 0.3);
+  --star-off: var(--acc-30);
 
   /* 字体（设计稿 Noto Sans SC + JetBrains Mono，系统 fallback 兜底） */
   --font-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
@@ -58,7 +58,7 @@
   --radius-sm: 0px;
 
   /* 阴影 */
-  --glow: 0 0 44px -8px rgba(192, 132, 216, 0.3);
+  --glow: 0 0 44px -8px var(--acc-30);
 
   /* 旧 token 别名（页面重绘期间过渡用，M3 完成后随旧 CSS 一并移除） */
   --bg-elevated: var(--panel-2);
@@ -94,9 +94,34 @@ button {
   font-family: inherit;
 }
 
-/* 全局氛围：26px 网格底 + 9s 扫描线（挂在 App 顶层 overlay 上） */
+/* 手机外壳（设计稿：390×844 直角描边卡片，居中浮于深色页面上） */
+.app-shell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 32px 20px;
+  background: var(--bg-page);
+}
+
+.phone-frame {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  height: calc(100vh - 64px);
+  max-height: 844px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  border: 1px solid var(--acc-16);
+  box-shadow: 0 40px 90px -40px rgba(154, 92, 240, 0.35);
+}
+
+/* 全局氛围：26px 网格底 + 9s 扫描线（挂在手机外壳内部） */
 .app-grid {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
@@ -106,7 +131,7 @@ button {
 }
 
 .app-scanline {
-  position: fixed;
+  position: absolute;
   left: 0;
   right: 0;
   top: 0;
@@ -122,7 +147,7 @@ button {
     transform: translateY(-140px);
   }
   to {
-    transform: translateY(100vh);
+    transform: translateY(880px);
   }
 }
 

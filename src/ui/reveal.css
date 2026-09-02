@@ -1,36 +1,24 @@
-/* 翻牌揭晓页（设计稿 reveal 屏：卡面 + 星 + 大字 + 宜/忌双栏） */
+/* 翻牌揭晓页（设计稿 isReveal 屏） */
 
 .reveal {
   position: relative;
   z-index: 2;
+  flex: 1;
   display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 32px 20px;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .reveal-inner {
-  width: 100%;
-  max-width: 390px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 64px);
-  animation: revealRise 0.45s ease both;
+  padding: 32px 20px;
+  min-height: 0;
 }
 
-@keyframes revealRise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 头部 */
 .reveal-head {
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -44,16 +32,14 @@
   letter-spacing: 0.06em;
 }
 
-/* 卡面 + 星级 */
 .reveal-stage {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
   min-height: 0;
-  padding: 16px 0;
+  gap: 18px;
 }
 
 .reveal-card-img {
@@ -64,18 +50,6 @@
   border: 1px solid var(--acc-55);
   box-shadow: 0 24px 60px -22px var(--acc-55);
   flex: none;
-  animation: revealFlipIn 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-@keyframes revealFlipIn {
-  from {
-    transform: rotateY(90deg);
-    opacity: 0;
-  }
-  to {
-    transform: rotateY(0);
-    opacity: 1;
-  }
 }
 
 .reveal-stars {
@@ -83,8 +57,7 @@
   gap: 5px;
 }
 
-/* 正文 */
-.reveal-title {
+.reveal-body h1.reveal-title {
   font: 900 var(--fs-display) / 1.1 var(--font-sans);
   color: #f7f3fa;
   letter-spacing: -0.03em;
@@ -94,10 +67,8 @@
   margin-top: 16px;
   font: 400 var(--fs-base) / 1.85 var(--font-sans);
   color: var(--ink-60);
-  text-wrap: pretty;
 }
 
-/* 宜/忌双栏 */
 .reveal-yj {
   margin-top: 20px;
   display: flex;
@@ -106,12 +77,12 @@
 
 .reveal-yj-cell {
   flex: 1;
-  padding: 16px 16px 18px;
   min-width: 0;
+  padding: 16px 16px 18px;
 }
 
-.reveal-yj-cell + .reveal-yj-cell {
-  border-left: 1px solid var(--ink-14);
+.reveal-yj-cell:first-child {
+  border-right: 1px solid var(--ink-14);
 }
 
 .reveal-yj-label {
@@ -126,11 +97,11 @@
 .reveal-yj-badge {
   width: 18px;
   height: 18px;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   font: 900 var(--fs-xs) / 1 var(--font-sans);
-  flex: none;
 }
 
 .reveal-yj-badge-good {
@@ -145,7 +116,7 @@
 
 .reveal-yj-text {
   margin-top: 12px;
-  font: 700 17px / 1.5 var(--font-sans);
+  font: 700 var(--fs-lg) / 1.5 var(--font-sans);
   color: var(--ink);
 }
 
@@ -153,12 +124,13 @@
   color: var(--ink-60);
 }
 
-/* CTA */
 .reveal-cta {
   margin-top: 20px;
+  margin-bottom: 18px;
   width: 100%;
   height: 54px;
   background: var(--acc);
+  border: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -166,16 +138,11 @@
   font: 800 15.5px / 1 var(--font-sans);
   color: var(--btn-ink);
   cursor: pointer;
-  border: none;
-  transition: filter 0.15s, transform 0.1s;
+  transition: filter 0.15s;
 }
 
 .reveal-cta:hover {
   filter: brightness(1.08);
-}
-
-.reveal-cta:active {
-  transform: scale(0.985);
 }
 
 .reveal-cta-arrow {

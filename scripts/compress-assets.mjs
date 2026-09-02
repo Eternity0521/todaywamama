@@ -15,11 +15,13 @@ import sharp from 'sharp';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DESIGN = path.join(ROOT, 'design', 'unpacked');
 const OUT_CARDS = path.join(ROOT, 'src', 'assets', 'cards');
-const OUT_HERO = path.join(ROOT, 'src', 'assets', 'hero');
-const BUDGET = 2 * 1024 * 1024; // 2MB
+const OUT_AGENTS = path.join(ROOT, 'src', 'assets', 'agents');
+const OUT_AGENTS_BUST = path.join(ROOT, 'src', 'assets', 'agents-bust');
+const BUDGET = 3 * 1024 * 1024; // 3MB（含立绘后上调）
 
 fs.mkdirSync(OUT_CARDS, { recursive: true });
-fs.mkdirSync(OUT_HERO, { recursive: true });
+fs.mkdirSync(OUT_AGENTS, { recursive: true });
+fs.mkdirSync(OUT_AGENTS_BUST, { recursive: true });
 
 const jobs = [];
 
@@ -30,10 +32,37 @@ for (let i = 1; i <= 10; i++) {
   jobs.push({ src, dst, w: 424, h: 752, q: 78, fit: 'contain' });
 }
 
-// 幽影立绘：860×1180 → 320×440（结果页 78×104 @2x 需求）
-jobs.push({ src: path.join(DESIGN, 'omen-bust.png'), dst: path.join(OUT_HERO, 'omen-bust.webp'), w: 320, h: 440, q: 80, fit: 'contain' });
-// 幽影头像：640×640 → 96×96
-jobs.push({ src: path.join(DESIGN, 'omen-head.png'), dst: path.join(OUT_HERO, 'omen-head.webp'), w: 96, h: 96, q: 80, fit: 'cover' });
+// 英雄头像（初次见面页 · 52px 卡片 @4x）：design/unpacked/agents/<id>.png → 208×208
+const agentsDir = path.join(DESIGN, 'agents');
+if (fs.existsSync(agentsDir)) {
+  for (const file of fs.readdirSync(agentsDir)) {
+    if (!file.endsWith('.png')) continue;
+    jobs.push({
+      src: path.join(agentsDir, file),
+      dst: path.join(OUT_AGENTS, file.replace(/\.png$/, '.webp')),
+      w: 208,
+      h: 208,
+      q: 80,
+      fit: 'cover',
+    });
+  }
+}
+
+// 英雄立绘（今日运势页角色卡 · 78×104 @2x 需求）：design/unpacked/agents-bust/<id>.png → 240×320
+const agentsBustDir = path.join(DESIGN, 'agents-bust');
+if (fs.existsSync(agentsBustDir)) {
+  for (const file of fs.readdirSync(agentsBustDir)) {
+    if (!file.endsWith('.png')) continue;
+    jobs.push({
+      src: path.join(agentsBustDir, file),
+      dst: path.join(OUT_AGENTS_BUST, file.replace(/\.png$/, '.webp')),
+      w: 240,
+      h: 320,
+      q: 82,
+      fit: 'cover',
+    });
+  }
+}
 
 let total = 0;
 for (const { src, dst, w, h, q, fit } of jobs) {

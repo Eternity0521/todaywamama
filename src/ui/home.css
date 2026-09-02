@@ -1,23 +1,22 @@
-/* 首页（设计稿 home 屏：扇形卡背 + 大字标语 + 主/次按钮） */
+/* 首页（设计稿 isHome 屏：扇形卡背 + 大字标语 + 单一按钮） */
 
 .home {
   position: relative;
   z-index: 2;
+  flex: 1;
   display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 32px 20px;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .home-inner {
-  width: 100%;
-  max-width: 390px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 64px);
+  padding: 32px 20px;
+  min-height: 0;
 }
 
-/* 头部：每日一卦 / 今日瓦运 + 日期 */
 .home-head {
   display: flex;
   justify-content: space-between;
@@ -45,30 +44,43 @@
   color: var(--ink-45);
 }
 
-/* 昨日运势短横条（保留功能：昨日星级 + 关键词） */
-.home-yesterday {
-  margin-top: 10px;
-  font: 500 var(--fs-xs) / 1.6 var(--font-mono);
-  letter-spacing: 0.04em;
-  color: var(--ink-45);
-}
-
 /* 三张扇形卡背 */
 .home-cards {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 0;
   gap: 10px;
-  min-height: 240px;
 }
 
 .card-back {
   position: relative;
   flex: none;
+}
+
+.card-back-side-l,
+.card-back-side-r {
+  width: 88px;
+  height: 156px;
   background: var(--panel);
   border: 1px solid var(--acc-30);
-  overflow: hidden;
+}
+
+.card-back-side-l {
+  transform: rotate(-6deg) translateY(10px);
+}
+
+.card-back-side-r {
+  transform: rotate(6deg) translateY(10px);
+}
+
+.card-back-main {
+  width: 106px;
+  height: 188px;
+  background: linear-gradient(180deg, var(--panel-2), #120e1a);
+  border: 1px solid var(--acc-55);
+  box-shadow: var(--glow);
 }
 
 .card-back-svg {
@@ -78,29 +90,9 @@
   height: 100%;
 }
 
-.card-back-side-l {
-  width: 88px;
-  height: 156px;
-  transform: rotate(-6deg) translateY(10px);
-}
-
-.card-back-side-r {
-  width: 88px;
-  height: 156px;
-  transform: rotate(6deg) translateY(10px);
-}
-
-.card-back-main {
-  width: 106px;
-  height: 188px;
-  background: linear-gradient(180deg, var(--panel-2), #120e1a);
-  border-color: var(--acc-55);
-  box-shadow: var(--glow);
-}
-
-/* 标语 */
+/* 大字标语 */
 .home-slogan h2 {
-  font: 900 42px / 1.14 var(--font-sans);
+  font: 900 var(--fs-hero) / 1.14 var(--font-sans);
   color: #f5f1f9;
   letter-spacing: -0.01em;
 }
@@ -111,17 +103,17 @@
   color: var(--ink-45);
 }
 
-/* 操作区 */
+/* 按钮 */
 .home-actions {
   margin-top: 26px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .home-cta {
+  width: 100%;
   height: 54px;
   background: var(--acc);
+  border: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -129,7 +121,6 @@
   font: 800 var(--fs-lg) / 1 var(--font-sans);
   color: var(--btn-ink);
   cursor: pointer;
-  border: none;
   transition: filter 0.15s, transform 0.1s;
 }
 
@@ -142,38 +133,12 @@
 }
 
 .home-cta-arrow {
-  font: 700 13px / 1 var(--font-mono);
+  font: 700 var(--fs-md) / 1 var(--font-mono);
 }
 
-.home-secondary {
-  display: flex;
-  gap: 8px;
-}
-
-.home-secondary button {
-  flex: 1;
-  height: 38px;
-  border: 1px solid var(--ink-14);
-  background: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font: 400 var(--fs-sm) / 1 var(--font-sans);
-  color: var(--ink-45);
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.home-secondary button:hover {
-  border-color: var(--acc-55);
-  color: var(--ink-60);
-}
-
-/* 页脚（铁律） */
 .home-footer {
-  margin-top: 22px;
   text-align: center;
-  font: 400 10px / 1 var(--font-mono);
-  letter-spacing: 0.08em;
+  font: 400 var(--fs-xs) / 1 var(--font-sans);
   color: var(--ink-30);
+  padding-bottom: 4px;
 }

@@ -17,9 +17,8 @@ export function shareTextOf(fortune: DailyFortune): string {
     `位置：${ROLE_NAMES[fortune.position.primary]}`,
     `英雄：${heroName(fortune.hero.id)}`,
     `武器：${weaponName(fortune.weapon.id)}`,
-    `皮肤：${fortune.skin.id}`,
-    `地图：${mapName(fortune.maps[0].id)}`,
-    `雷区：${mapName(fortune.maps[fortune.maps.length - 1].id)}`,
+    `皮肤：${fortune.skin.skins.join('、')}`,
+    `地图：${mapName(fortune.map.id)}`,
     `建议：${fortune.advice.keyword}`,
   ].join('｜');
 }

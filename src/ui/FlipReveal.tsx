@@ -11,17 +11,21 @@ interface Props {
 /** 五星行（设计稿 SVG 星形，紫色实心 / acc-30 描边空心） */
 function StarSvg({ on }: { on: boolean }) {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"
-      fill={on ? 'var(--acc)' : 'none'} stroke={on ? 'none' : 'var(--acc-30)'} strokeWidth="1.6">
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill={on ? 'var(--acc)' : 'none'}
+      stroke={on ? 'none' : 'var(--acc-30)'}
+      strokeWidth="1.6"
+    >
       <path d="M12 1.8l3.1 6.5 7.1.9-5.2 4.9 1.3 7-6.3-3.4-6.3 3.4 1.3-7L1.8 9.2l7.1-.9z" />
     </svg>
   );
 }
 
-/**
- * 翻牌揭晓（指导书 §7.3，PRD §12/13）——设计稿 reveal 屏：
- * 卡面图 + 星级 + 大字标题 + 解读 + 宜/忌双栏。
- */
+/** 翻牌揭晓（指导书 §7.3）——设计稿 isReveal 屏：卡面图 + 星级 + 大字标题 + 解读 + 宜/忌。 */
 export default function FlipReveal({ fortune, onDone }: Props) {
   const { main } = fortune;
   const cardUrl = cardImageUrl(main.cardId);
@@ -35,9 +39,7 @@ export default function FlipReveal({ fortune, onDone }: Props) {
         </header>
 
         <div className="reveal-stage">
-          {cardUrl && (
-            <img className="reveal-card-img" src={cardUrl} alt={main.cardName} draggable={false} />
-          )}
+          {cardUrl && <img className="reveal-card-img" src={cardUrl} alt={main.cardName} draggable={false} />}
           <div className="reveal-stars" role="img" aria-label={`${main.stars} 星`}>
             {[1, 2, 3, 4, 5].map((s) => (
               <StarSvg key={s} on={s <= main.stars} />

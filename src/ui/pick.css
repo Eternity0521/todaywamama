@@ -1,23 +1,22 @@
-/* 抽卡页（设计稿 draw 屏：手动翻转、可翻回） */
+/* 抽卡页（设计稿 draw 屏：11 张卡弧形轨道 + 拖拽/滚轮转动 + 原地翻面） */
 
 .pick {
   position: relative;
   z-index: 2;
+  flex: 1;
   display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 32px 20px;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .pick-inner {
-  width: 100%;
-  max-width: 390px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 64px);
+  padding: 32px 20px;
+  min-height: 0;
 }
 
-/* 头部：返回 + 步骤标签 */
 .pick-head {
   display: flex;
   justify-content: space-between;
@@ -48,7 +47,10 @@
   color: var(--acc-55);
 }
 
-/* 标语 */
+.pick-slogan {
+  margin-top: 42px;
+}
+
 .pick-slogan h1 {
   font: 900 var(--fs-2xl) / 1.18 var(--font-sans);
   color: #f5f1f9;
@@ -61,88 +63,68 @@
   color: var(--ink-45);
 }
 
-/* 卡牌舞台 */
+/* 弧形轨道舞台 */
 .pick-stage {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 380px;
-}
-
-.pick-cards {
+  min-height: 0;
   position: relative;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
   perspective: 1200px;
 }
 
-.pick-card {
-  position: relative;
-  width: 104px;
-  height: 184px;
-  flex: none;
-  cursor: pointer;
-  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease;
+.pick-rail {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  perspective: 900px;
+  perspective-origin: 50% 50%;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    rgba(0, 0, 0, 0.55) 5%,
+    #000 14%,
+    #000 86%,
+    rgba(0, 0, 0, 0.55) 95%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    rgba(0, 0, 0, 0.55) 5%,
+    #000 14%,
+    #000 86%,
+    rgba(0, 0, 0, 0.55) 95%,
+    transparent 100%
+  );
 }
 
-/* 待选：三卡扇形 */
-.pick-cards.phase-idle .pick-card-0 {
-  transform: rotate(-7deg) translateY(10px);
+.pick-track {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
 }
 
-.pick-cards.phase-idle .pick-card-2 {
-  transform: rotate(7deg) translateY(10px);
-}
-
-/* 选中：居中放大（翻面 ⇄ 翻回由行内 rotateY 驱动） */
-.pick-cards.phase-chosen .pick-card.chosen,
-.pick-cards.phase-flip .pick-card.chosen {
+.pick-rail-card {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 188px;
-  height: 333px;
-  transform: translate(-50%, -50%);
-  z-index: 3;
-}
-
-/* 未选中：下沉淡出 */
-.pick-cards.phase-chosen .pick-card:not(.chosen),
-.pick-cards.phase-flip .pick-card:not(.chosen) {
-  transform: translateY(18px) scale(0.9);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.pick-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.pick-card-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
+  margin: -110px 0 0 -62px;
+  width: 124px;
+  height: 220px;
+  box-sizing: border-box;
+  cursor: pointer;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 卡背：深色渐变 + 菱形符号 */
-.pick-card-backface {
   background: linear-gradient(180deg, var(--panel-2), #120e1a);
   border: 1px solid var(--acc-30);
+  will-change: transform, opacity;
 }
 
-.pick-card-backface svg {
+.pick-rail-card svg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -150,15 +132,64 @@
   opacity: 0.8;
 }
 
-/* 卡面：当日真实卡面图 */
-.pick-card-front {
-  background: var(--panel);
-  border: 1px solid var(--acc);
-  box-shadow: 0 0 60px -6px var(--acc-55);
-  transform: rotateY(180deg);
+/* 中央大卡（抽中后原地缩放 + 翻面） */
+.pick-big-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
 }
 
-.pick-card-front img {
+.pick-big {
+  position: relative;
+  flex: none;
+  width: 188px;
+  height: 333px;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.62s cubic-bezier(0.22, 0.9, 0.24, 1), opacity 0.3s ease;
+}
+
+.pick-big-face {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: linear-gradient(180deg, var(--panel-2), #120e1a);
+  border: 1px solid var(--acc-30);
+  transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pick-big-face.is-flipped {
+  background: #efeaf7;
+  border-color: var(--acc);
+  box-shadow: 0 0 60px -6px var(--acc-55);
+}
+
+.pick-big-back {
+  position: absolute;
+  inset: 0;
+}
+
+.pick-big-back svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+
+.pick-big-face img {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -173,7 +204,7 @@
   padding: 10px;
 }
 
-/* 底部：抽到提示 + 卡面解读 */
+/* 底部：抽到提示 + 卡面解读 / 抽取这张按钮 */
 .pick-done {
   animation: pickRise 0.4s ease both;
 }
@@ -198,6 +229,7 @@
 
 .pick-cta {
   margin-top: 14px;
+  margin-bottom: 36px;
   width: 100%;
   height: 54px;
   background: var(--acc);
@@ -224,10 +256,39 @@
   font: 700 13px / 1 var(--font-mono);
 }
 
-.pick-hint {
-  padding: 19px 0;
-  text-align: center;
-  font: 400 var(--fs-sm) / 1.8 var(--font-sans);
-  letter-spacing: 0.04em;
-  color: var(--ink-30);
+.pick-idle-actions {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 0 0 54px;
+  margin-top: -28px;
+}
+
+.pick-draw-btn {
+  height: 46px;
+  min-width: 172px;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--acc);
+  color: #120e1a;
+  border: none;
+  cursor: pointer;
+  font: 700 var(--fs-md) / 1 var(--font-sans);
+  letter-spacing: 0.22em;
+  box-shadow: 0 14px 38px -16px var(--acc-55);
+  transition: filter 0.15s, transform 0.1s;
+}
+
+.pick-draw-btn:hover {
+  filter: brightness(1.08);
+}
+
+.pick-draw-btn:active {
+  transform: translateY(1px);
 }

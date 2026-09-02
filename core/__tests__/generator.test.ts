@@ -102,12 +102,21 @@ describe('星级分布（指导书 §5.2）', () => {
   });
 });
 
-describe('地图（指导书 §11.6）', () => {
-  it('5 图星级为 1–5 的排列且降序，首图 5★ 末图 1★', () => {
+describe('地图 / 武器星级（指导书 §11.6，「幸运」只在 4–5 星浮动）', () => {
+  it('幸运地图 / 幸运武器星级恒为 4 或 5', () => {
     const f = genDailyFortune('u1', '2026-08-23', 0, memStore());
-    expect(f.maps).toHaveLength(5);
-    expect(f.maps.map((m) => m.stars)).toEqual([5, 4, 3, 2, 1]);
-    expect(new Set(f.maps.map((m) => m.id)).size).toBe(5);
+    expect([4, 5]).toContain(f.map.stars);
+    expect([4, 5]).toContain(f.weapon.stars);
+  });
+
+  it('多次生成能同时覆盖到 4★ 和 5★（不是恒定值）', () => {
+    const store = memStore();
+    const mapStarsSeen = new Set<number>();
+    for (let i = 0; i < 200; i++) {
+      const f = genDailyFortune(`u${i}`, '2026-08-23', 0, store);
+      mapStarsSeen.add(f.map.stars);
+    }
+    expect(mapStarsSeen).toEqual(new Set([4, 5]));
   });
 });
 

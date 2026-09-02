@@ -27,15 +27,9 @@ function makeFortune(userId: string, date: string): DailyFortune {
       heroes: ['Omen', 'Clove', 'Viper'],
     },
     hero: { id: 'Omen', match: 92, keywords: ['冷静', '信息差', '偷 timing'], blurb: '测试解释' },
-    weapon: { id: 'Phantom', reason: '测试理由', avoid: { id: 'Operator', reason: '测试理由' } },
-    skin: { id: 'RGX 11z Pro', match: 95, color: '绿色', buddy: 'RGX Butterfly', blurb: '测试文案' },
-    maps: [
-      { id: 'Ascent', stars: 5, label: '上分圣地' },
-      { id: 'Haven', stars: 4, label: '可以一战' },
-      { id: 'Bind', stars: 3, label: '五五开' },
-      { id: 'Lotus', stars: 2, label: '容易坐牢' },
-      { id: 'Breeze', stars: 1, label: '今天最好别碰' },
-    ],
+    weapon: { id: 'Phantom', stars: 4, reason: '测试理由', avoid: { id: 'Operator', reason: '测试理由' } },
+    skin: { skins: ['RGX 11z Pro', '归零者'], match: 95, color: '绿色', buddy: 'RGX Butterfly', blurb: '测试文案' },
+    map: { id: 'Ascent', stars: 5, label: '上分圣地' },
     advice: { keyword: '别急', note: '今天你的枪法会奖励耐心。' },
   };
 }

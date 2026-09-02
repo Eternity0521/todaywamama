@@ -1,20 +1,20 @@
-/* 分享卡页（设计稿 share 屏） */
+/* 分享卡页（设计稿 isShare 屏） */
 
 .share {
   position: relative;
   z-index: 2;
+  flex: 1;
   display: flex;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 32px 20px;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .share-inner {
-  width: 100%;
-  max-width: 390px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 64px);
+  padding: 32px 20px;
+  min-height: 0;
   animation: shareRise 0.4s ease both;
 }
 
@@ -29,7 +29,6 @@
   }
 }
 
-/* 头部：返回 + 标签 */
 .share-head {
   display: flex;
   justify-content: space-between;
@@ -60,7 +59,6 @@
   color: var(--acc-55);
 }
 
-/* 预览 */
 .share-stage {
   flex: 1;
   display: flex;
@@ -70,29 +68,147 @@
   min-height: 0;
 }
 
-.share-img {
-  max-width: min(320px, 78vw);
-  max-height: 62vh;
-  width: auto;
-  height: auto;
-  display: block;
+/* 分享卡本体（设计稿：活的 HTML/CSS，跟其它屏同一套字体渲染，仅保存时才栅格化） */
+.share-card {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(170deg, #1a1224, #100c17 60%);
   border: 1px solid var(--acc-55);
+  padding: 24px 22px 18px;
   box-shadow: 0 30px 60px -28px var(--acc-30);
-  object-fit: contain;
 }
 
-.share-loading {
-  aspect-ratio: 9 / 16;
-  max-height: 62vh;
+.share-card-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(var(--acc-04) 1px, transparent 1px),
+    linear-gradient(90deg, var(--acc-04) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.share-card-content {
+  position: relative;
+}
+
+.share-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.share-card-id {
   display: flex;
   align-items: center;
-  justify-content: center;
-  border: 1px solid var(--ink-14);
-  font: 400 var(--fs-base) / 1 var(--font-sans);
+  gap: 8px;
+  font: 900 15px / 1 var(--font-sans);
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+.share-card-id img {
+  width: 22px;
+  height: 22px;
+  object-fit: cover;
+  border: 1px solid var(--acc-30);
+  flex: none;
+  display: block;
+}
+
+.share-card-date {
+  font: 500 var(--fs-xs) / 1 var(--font-sans);
+  color: var(--ink-30);
+  letter-spacing: 0.06em;
+}
+
+.share-card-stars {
+  margin-top: 14px;
+  display: flex;
+  gap: 5px;
+}
+
+.share-card-title {
+  margin-top: 16px;
+  font: 900 46px / 1.02 var(--font-sans);
+  color: #f7f3fa;
+  letter-spacing: -0.03em;
+}
+
+.share-card-grid-2x2 {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--ink-14);
+}
+
+.share-card-cell {
+  background: #130f1a;
+  padding: 12px 13px;
+  min-width: 0;
+}
+
+.share-card-cell.accent {
+  background: var(--acc);
+}
+
+.share-card-cell-label {
+  font: 500 10px / 1 var(--font-sans);
+  letter-spacing: 0.1em;
+  color: var(--ink-30);
+}
+
+.share-card-cell.accent .share-card-cell-label {
+  color: rgba(12, 9, 16, 0.55);
+}
+
+.share-card-cell-value {
+  margin-top: 8px;
+  font: 900 16px / 1.15 var(--font-sans);
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+
+.share-card-cell.accent .share-card-cell-value {
+  color: var(--btn-ink);
+}
+
+.share-card-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--ink-14);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.share-card-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 700 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.12em;
   color: var(--ink-45);
 }
 
-/* 操作按钮 */
+.share-card-diamond {
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--acc);
+  transform: rotate(45deg);
+  flex: none;
+}
+
+.share-card-qr {
+  width: 30px;
+  height: 30px;
+  background: var(--ink-14);
+  background-image: repeating-linear-gradient(90deg, var(--ink-45) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(0deg, var(--ink-45) 0 2px, transparent 2px 4px);
+  opacity: 0.5;
+}
+
 .share-actions {
   flex: none;
   display: flex;
@@ -145,7 +261,11 @@
   transform: scale(0.985);
 }
 
-/* toast（设计稿：浅底反色胶囊） */
+.share-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .share-toast {
   position: fixed;
   left: 50%;

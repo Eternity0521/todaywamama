@@ -5,13 +5,15 @@
  */
 type EventName =
   | 'view_home'
+  | 'view_reveal'
+  | 'onboard_finish'
+  | 'onboard_skip'
   | 'test_start'
   | 'card_pick'
   | 'fortune_complete'
   | 'share_open'
   | 'share_save'
-  | 'share_copy'
-  | 'reroll_click';
+  | 'share_copy';
 
 export function track(name: EventName, props?: Record<string, unknown>): void {
   console.info(`[track] ${name}`, props ?? {});

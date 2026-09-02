@@ -1,0 +1,218 @@
+/* 初次见面页（设计稿 isOnboard 屏：昵称 + 常打位置 + 常用英雄） */
+
+.onboard {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.onboard-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 20px;
+  min-height: 0;
+}
+
+.onboard-head {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--acc-30);
+}
+
+.onboard-kicker {
+  font: 500 var(--fs-xs) / 1 var(--font-sans);
+  letter-spacing: 0.2em;
+  color: var(--acc);
+}
+
+.onboard-title {
+  margin-top: 8px;
+  font: 900 22px / 1 var(--font-sans);
+  color: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+.onboard-field {
+  margin-top: 32px;
+}
+
+.onboard-label {
+  font: 700 var(--fs-2xs) / 1 var(--font-sans);
+  letter-spacing: 0.2em;
+  color: var(--ink-30);
+}
+
+.onboard-input {
+  margin-top: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--ink-14);
+  color: var(--ink);
+  font: 600 15px / 1 var(--font-sans);
+  outline: none;
+}
+
+.onboard-input:focus {
+  border-color: var(--acc);
+}
+
+.onboard-input::placeholder {
+  color: var(--ink-30);
+}
+
+.onboard-body {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.onboard-roles {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.onboard-role {
+  height: 44px;
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--ink-14);
+  color: var(--ink);
+  font: 800 var(--fs-base) / 1 var(--font-sans);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s;
+}
+
+.onboard-role.is-on {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--acc);
+  box-shadow: 0 14px 34px -20px var(--acc-55);
+}
+
+.onboard-label-agents {
+  margin-top: 22px;
+}
+
+.onboard-agents {
+  margin-top: 10px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  align-content: start;
+  scrollbar-width: none;
+}
+
+.onboard-agents::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.onboard-agent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.onboard-agent-thumb {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex: none;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--ink-14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.16s;
+}
+
+.onboard-agent.is-on .onboard-agent-thumb {
+  border-color: var(--acc);
+}
+
+.onboard-agent-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.onboard-agent-name {
+  font: 600 var(--fs-xs) / 1.2 var(--font-sans);
+  color: var(--ink-45);
+  text-align: center;
+}
+
+.onboard-agent.is-on .onboard-agent-name {
+  color: var(--ink);
+}
+
+.onboard-actions {
+  margin-top: 20px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.onboard-cta {
+  height: 54px;
+  padding: 0 20px;
+  background: var(--acc);
+  color: var(--btn-ink);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font: 800 var(--fs-lg) / 1 var(--font-sans);
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.1s;
+}
+
+.onboard-cta:hover {
+  filter: brightness(1.08);
+}
+
+.onboard-cta:active {
+  transform: scale(0.985);
+}
+
+.onboard-cta-arrow {
+  font: 700 var(--fs-md) / 1 var(--font-mono);
+}
+
+.onboard-skip {
+  background: none;
+  border: none;
+  text-align: center;
+  font: 400 var(--fs-sm) / 1 var(--font-sans);
+  color: var(--ink-30);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.15s;
+}
+
+.onboard-skip:hover {
+  color: var(--ink-60);
+}
