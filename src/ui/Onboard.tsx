@@ -7,11 +7,13 @@ import './onboard.css';
 interface Props {
   profile: Profile;
   onFinish: (profile: Profile) => void;
-  onSkip: () => void;
+  onSkip?: () => void;
+  /** 'onboard'（首次见面，默认）｜ 'edit'（首页「我的设定」进来的重新编辑，去掉标题和跳过） */
+  mode?: 'onboard' | 'edit';
 }
 
-/** 「初次见面 · 先认识一下」onboarding 页（设计稿 isOnboard 屏，逐字段还原） */
-export default function Onboard({ profile, onFinish, onSkip }: Props) {
+/** 「初次见面 · 先认识一下」页 / 「我的设定」编辑页（设计稿 isOnboard 屏，逐字段还原） */
+export default function Onboard({ profile, onFinish, onSkip, mode = 'onboard' }: Props) {
   const [nick, setNick] = useState(profile.nick);
   const [role, setRole] = useState<AgentRole | null>((profile.role as AgentRole) ?? null);
   const [agents, setAgents] = useState<string[]>(profile.agents);
@@ -33,12 +35,14 @@ export default function Onboard({ profile, onFinish, onSkip }: Props) {
   return (
     <main className="onboard">
       <div className="onboard-inner">
-        <header className="onboard-head">
-          <div className="onboard-kicker">初次见面</div>
-          <h1 className="onboard-title">先认识一下</h1>
-        </header>
+        {mode === 'onboard' && (
+          <header className="onboard-head">
+            <div className="onboard-kicker">初次见面</div>
+            <h1 className="onboard-title">先认识一下</h1>
+          </header>
+        )}
 
-        <div className="onboard-field">
+        <div className="onboard-field" style={mode === 'edit' ? { marginTop: 0 } : undefined}>
           <div className="onboard-label">你的昵称</div>
           <input
             className="onboard-input"
@@ -86,12 +90,14 @@ export default function Onboard({ profile, onFinish, onSkip }: Props) {
 
         <div className="onboard-actions">
           <button className="onboard-cta" type="button" onClick={finish}>
-            <span>开始占卜</span>
+            <span>{mode === 'edit' ? '保存' : '开始占卜'}</span>
             <span className="onboard-cta-arrow">→</span>
           </button>
-          <button className="onboard-skip" type="button" onClick={onSkip}>
-            随缘，先跳过
-          </button>
+          {mode === 'onboard' && (
+            <button className="onboard-skip" type="button" onClick={onSkip}>
+              随缘，先跳过
+            </button>
+          )}
         </div>
       </div>
     </main>

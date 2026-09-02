@@ -1,10 +1,20 @@
 import type { DailyFortune } from '../../core/types';
-import { formatDateShortCN } from '../format';
 import './home.css';
 
 interface Props {
   today: DailyFortune | null;
   onStart: () => void;
+  onSettings: () => void;
+}
+
+/** 「我的设定」按钮图标（设计稿内联 SVG：简笔头像） */
+function SettingsIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+      <circle cx="6" cy="4" r="2.1" />
+      <path d="M1.8 11c0-2.3 1.9-3.6 4.2-3.6S10.2 8.7 10.2 11" />
+    </svg>
+  );
 }
 
 /** 卡背菱形符号（设计稿内联 SVG，居中卡加大透明度） */
@@ -31,7 +41,7 @@ function CardBackSvg({ dim = false }: { dim?: boolean }) {
 }
 
 /** 首页「今日瓦运」（设计稿 isHome 屏：两种状态——今天没测过 / 今天已测过） */
-export default function Home({ today, onStart }: Props) {
+export default function Home({ today, onStart, onSettings }: Props) {
   const drawn = today !== null;
 
   return (
@@ -42,7 +52,12 @@ export default function Home({ today, onStart }: Props) {
             <div className="home-kicker">每日一卦</div>
             <h1 className="home-brand">今日瓦运</h1>
           </div>
-          <p className="home-date">{formatDateShortCN(new Date())}</p>
+          <div className="home-head-right">
+            <button className="home-settings" type="button" onClick={onSettings}>
+              <SettingsIcon />
+              <span>我的设定</span>
+            </button>
+          </div>
         </header>
 
         <div className="home-cards" aria-hidden="true">

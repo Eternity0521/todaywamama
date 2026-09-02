@@ -12,7 +12,7 @@ import FlipReveal from './ui/FlipReveal';
 import FortuneResult from './ui/FortuneResult';
 import ShareCard from './ui/ShareCard';
 
-type Stage = 'onboard' | 'home' | 'pick' | 'flip' | 'result' | 'share';
+type Stage = 'onboard' | 'settings' | 'home' | 'pick' | 'flip' | 'result' | 'share';
 
 /**
  * 流程状态机（指导书 §7）：onboard → home → pick → flip → result → share。
@@ -77,11 +77,20 @@ export default function App() {
     setStage('home');
   }
 
+  function handleSettingsSave(next: Profile) {
+    track('settings_save');
+    saveProfile(next);
+    setProfile(next);
+    setStage('home');
+  }
+
   let page;
   if (stage === 'onboard') {
     page = <Onboard profile={profile} onFinish={handleOnboardFinish} onSkip={handleOnboardSkip} />;
+  } else if (stage === 'settings') {
+    page = <Onboard profile={profile} onFinish={handleSettingsSave} mode="edit" />;
   } else if (stage === 'home' || fortune === null) {
-    page = <Home today={fortune} onStart={handleStart} />;
+    page = <Home today={fortune} onStart={handleStart} onSettings={() => setStage('settings')} />;
   } else {
     switch (stage) {
       case 'pick':

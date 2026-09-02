@@ -8,6 +8,7 @@ type EventName =
   | 'view_reveal'
   | 'onboard_finish'
   | 'onboard_skip'
+  | 'settings_save'
   | 'test_start'
   | 'card_pick'
   | 'fortune_complete'
