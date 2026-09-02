@@ -6,7 +6,8 @@ import './pick.css';
 interface Props {
   fortune: DailyFortune;
   onBack: () => void;
-  onPicked: () => void;
+  onLocked: (slot: number) => void; // 选中卡位 → 锁定卡面（首选锁定）
+  onPicked: () => void; // 卡面解读 → 进入揭晓页
 }
 
 type Phase = 'idle' | 'chosen' | 'flip';
@@ -66,7 +67,7 @@ function CardBackFace() {
  * 点中间那张（或底部按钮）抽取；抽到的牌原地翻面，可再点大卡翻回。
  * 无论转到哪张、抽到的都是同一份今日运势（纯仪式，非随机源）。
  */
-export default function CardPick({ fortune, onBack, onPicked }: Props) {
+export default function CardPick({ fortune, onBack, onLocked, onPicked }: Props) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [turns, setTurns] = useState(0);
   const [bigIn, setBigIn] = useState(false);
@@ -160,6 +161,9 @@ export default function CardPick({ fortune, onBack, onPicked }: Props) {
 
   function draw() {
     if (phaseRef.current !== 'idle') return;
+    // 首选锁定：中心卡位决定卡面（0–10，与独立种子流 cardForSlot 对应）
+    const slot = ((centerIndex() % RAIL_N) + RAIL_N) % RAIL_N;
+    onLocked(slot);
     setPhase('chosen');
     setTurns(0);
     setBigIn(false);

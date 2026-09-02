@@ -1,3 +1,5 @@
+import type { Role } from '../types';
+
 /**
  * 英雄名录（初次见面页 · 你常用的英雄）。
  * id 与 src/assets/agents/*.webp 一一对应；name 为国服官方译名。
@@ -50,10 +52,26 @@ export const AGENT_POOL: AgentEntry[] = [
 ];
 
 /**
+ * 归一化英雄 id：小写并去掉非字母数字字符。
+ * 'KAY/O' → 'kayo'、'Omen' → 'omen'，与 AGENT_POOL 的小写 id 体系对齐。
+ */
+export function normalizeAgentId(id: string): string {
+  return id.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/**
  * core/content/heroes.ts 的 HeroEntry.id 是英文原名（如 'KAY/O'、'Omen'），
  * 这里归一化后去查 AGENT_POOL，取得头像与国服译名。
  */
 export function agentByRawId(rawId: string): AgentEntry | undefined {
-  const norm = rawId.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const norm = normalizeAgentId(rawId);
   return AGENT_POOL.find((a) => a.id === norm);
 }
+
+/** AgentRole（onboarding 偏好）→ core Role（生成算法位置类型） */
+export const AGENT_ROLE_TO_CORE: Record<AgentRole, Role> = {
+  duel: 'duelist',
+  init: 'initiator',
+  ctrl: 'controller',
+  sent: 'sentinel',
+};

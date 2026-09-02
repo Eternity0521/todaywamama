@@ -15,7 +15,7 @@ interface Props {
 /** 「初次见面 · 先认识一下」页 / 「我的设定」编辑页（设计稿 isOnboard 屏，逐字段还原） */
 export default function Onboard({ profile, onFinish, onSkip, mode = 'onboard' }: Props) {
   const [nick, setNick] = useState(profile.nick);
-  const [role, setRole] = useState<AgentRole | null>((profile.role as AgentRole) ?? null);
+  const [role, setRole] = useState<AgentRole | null>(profile.role ?? null);
   const [agents, setAgents] = useState<string[]>(profile.agents);
 
   function toggleRole(id: AgentRole) {

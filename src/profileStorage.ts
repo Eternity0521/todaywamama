@@ -2,12 +2,14 @@
  * 「先认识一下」页的用户资料（昵称/常打位置/常用英雄）。
  * 与 core 层的运势记录（storage.ts）无关，只是 UI 侧的展示性偏好，单独存放。
  */
+import { AGENT_ROLES, type AgentRole } from '../core/content/agents';
+
 const KEY = 'gg.profile.v1';
 
 export interface Profile {
   onboarded: boolean;
   nick: string;
-  role: string | null;
+  role: AgentRole | null;
   agents: string[];
 }
 
@@ -18,7 +20,18 @@ export function loadProfile(): Profile {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<Profile>;
-      return { ...DEFAULT_PROFILE, ...parsed };
+      // 运行时校验：损坏/非法数据兜底（非法 role → null；agents 只留字符串）
+      const roleOk =
+        typeof parsed.role === 'string' && AGENT_ROLES.some((r) => r.id === parsed.role);
+      const agentsOk = Array.isArray(parsed.agents)
+        ? parsed.agents.filter((a): a is string => typeof a === 'string')
+        : [];
+      return {
+        ...DEFAULT_PROFILE,
+        ...parsed,
+        role: roleOk ? (parsed.role as AgentRole) : null,
+        agents: agentsOk,
+      };
     }
   } catch {
     // 数据损坏则重置

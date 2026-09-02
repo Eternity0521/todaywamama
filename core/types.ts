@@ -6,6 +6,16 @@
 /** 位置：决斗 / 先锋 / 控场 / 哨卫 */
 export type Role = 'duelist' | 'initiator' | 'controller' | 'sentinel';
 
+/**
+ * 用户偏好（指导书 §5.3 偏好档，P1 挂点已接入）。
+ * 来自 onboarding 页收集的常打位置/常用英雄，仅作权重输入，不进种子串。
+ * agents 为小写 id（core/content/agents.ts），匹配英雄池时经 normalizeAgentId 归一化。
+ */
+export interface UserPrefs {
+  role: Role | null; // 常打位置；null = 未设置
+  agents: string[]; // 常用英雄 id（可跨位置，仅命中主位置时生效）
+}
+
 export type Star = 1 | 2 | 3 | 4 | 5;
 
 /** 今日总运 / 主运卡（PRD §12/13；UI 融合后：卡面为主运核心内容，星级独立） */
