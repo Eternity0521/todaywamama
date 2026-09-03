@@ -13,12 +13,17 @@
  * 分享链接：本地调试（localhost）无公开链接；部署后自动带上当前页面地址。
  */
 import { copyText } from '../clipboard';
-import { downloadDataUrl } from './saveImage';
+import { downloadBlobUrl } from './saveImage';
 
 const isWeChat =
   typeof navigator !== 'undefined' && /MicroMessenger/i.test(navigator.userAgent);
 const isIOS =
   typeof navigator !== 'undefined' && /iPhone|iPad|iPod/i.test(navigator.userAgent);
+/** 夸克/UC/QQ/小米等国产安卓浏览器：下载兼容性差，但分享面板通常自带「保存图片」 */
+const isChineseAndroidBrowser =
+  typeof navigator !== 'undefined' &&
+  !isIOS &&
+  /Quark|UCBrowser|QQBrowser|MiuiBrowser|MQQBrowser/i.test(navigator.userAgent);
 
 function isTouchDevice(): boolean {
   return (
@@ -80,19 +85,24 @@ async function copyImageToClipboard(file: File): Promise<boolean> {
 
 /** 保存图片：返回给用户的提示文案（空串 = 无需提示） */
 export async function saveFortuneImage(dataUrl: string, filename: string): Promise<string> {
-  // iOS 上 a[download] 会打开新标签页而不是保存 → 走系统分享面板（「存储图像」）
-  if (isIOS && !isWeChat) {
-    const file = await dataUrlToFile(dataUrl, filename);
-    // 直接尝试，不支持文件的浏览器由 shareFiles 内部捕获后走下载兜底
-    if (file && 'share' in navigator) {
-      const r = await shareFiles(file, filename);
-      if (r === 'shared') return '已弹出面板：点「存储图像」即可保存到相册';
+  const file = await dataUrlToFile(dataUrl, filename);
+
+  // iOS 与国产安卓浏览器：a[download] 不可靠 → 走分享面板（「存储图像」/「保存图片」）
+  if ((isIOS || isChineseAndroidBrowser) && !isWeChat && file && 'share' in navigator) {
+    const r = await shareFiles(file, filename);
+    if (r === 'shared') {
+      return isIOS
+        ? '已弹出面板：点「存储图像」即可保存到相册'
+        : '已弹出面板：选「保存图片」存入相册';
     }
   }
-  // 桌面 / 安卓：直接下载（安卓存入下载目录，相册中可见）
-  downloadDataUrl(dataUrl, filename);
+
+  // 其余安卓 / 桌面：Blob URL 下载（夸克等对 data: URL 兼容差，Blob 是标准做法）
+  const ok = await downloadBlobUrl(dataUrl, filename);
   if (isWeChat) return '微信内下载受限：请长按上方图片保存到相册';
-  return '已开始下载：图片会保存到手机下载目录，相册中可见';
+  return ok
+    ? '已开始下载：图片会保存到手机下载目录，相册中可见'
+    : '下载失败：请长按上方图片保存到相册';
 }
 
 /** 分享给朋友：返回给用户的提示文案（空串 = 无需提示） */
@@ -117,13 +127,15 @@ export async function shareFortune(text: string, dataUrl: string, filename: stri
   if (shareResult === 'shared') return '已弹出分享面板';
   if (shareResult === 'cancelled') return '';
 
-  // 4. 复制文案兜底（小米/UC 等无分享面板的浏览器、微信内置浏览器也落在这里）
+  // 4. 复制文案兜底（无分享面板的浏览器、微信内置浏览器也落在这里）
   const full = url ? `${text}｜${url}` : text;
   const ok = await copyText(full);
   if (ok) {
     return isWeChat
       ? '微信内无法弹出分享：已复制文案，或长按上方图片发送'
-      : '已复制运势文案（含链接）：粘贴发送；想发图可长按上方图片';
+      : '已复制运势文案（含链接）：粘贴发送；长按上方图片可直接发图';
   }
-  return '分享失败：请长按上方图片保存后手动发送';
+  return isChineseAndroidBrowser
+    ? '分享未成功：请长按上方图片保存后发送'
+    : '分享失败：请长按上方图片保存后手动发送';
 }
