@@ -6,10 +6,9 @@ import { weaponName } from '../../core/content/weapons';
 import { mapName } from '../../core/content/maps';
 import { formatDateMD, extractCN } from '../format';
 import { agentImageUrl } from './agentAssets';
-import { downloadDataUrl } from '../share/saveImage';
+import { saveFortuneImage, shareFortune } from '../share/shareOut';
 import { shareTextOf } from '../share/shareText';
 import { track } from '../analytics';
-import { copyText } from '../clipboard';
 import './share.css';
 
 interface Props {
@@ -55,8 +54,8 @@ export default function ShareCard({ fortune, nickname, onBack, onHome }: Props) 
     setSaving(true);
     try {
       const dataUrl = await toPng(cardRef.current, { pixelRatio: 3, cacheBust: true, skipFonts: true });
-      downloadDataUrl(dataUrl, `今日瓦运-${fortune.date}.png`);
-      setToast('已开始下载；若没有反应，请长按上方图片保存');
+      const msg = await saveFortuneImage(dataUrl, `今日瓦运-${fortune.date}.png`);
+      if (msg) setToast(msg);
     } catch {
       setToast('生成图片失败，请长按上方图片保存');
     } finally {
@@ -64,10 +63,19 @@ export default function ShareCard({ fortune, nickname, onBack, onHome }: Props) 
     }
   }
 
-  async function handleCopy() {
+  async function handleShare() {
     track('share_copy');
-    const ok = await copyText(shareTextOf(fortune));
-    setToast(ok ? '已复制，去发给队友吧' : '复制失败，请手动截图');
+    if (!cardRef.current) return;
+    setSaving(true);
+    try {
+      const dataUrl = await toPng(cardRef.current, { pixelRatio: 3, cacheBust: true, skipFonts: true });
+      const msg = await shareFortune(shareTextOf(fortune), dataUrl, `今日瓦运-${fortune.date}.png`);
+      if (msg) setToast(msg);
+    } catch {
+      setToast('分享失败：请长按上方图片保存后手动发送');
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -148,7 +156,7 @@ export default function ShareCard({ fortune, nickname, onBack, onHome }: Props) 
           <button className="share-btn primary" type="button" onClick={handleSave} disabled={saving}>
             {saving ? '生成中…' : '保存图片'}
           </button>
-          <button className="share-btn secondary" type="button" onClick={handleCopy}>
+          <button className="share-btn secondary" type="button" onClick={handleShare} disabled={saving}>
             分享给好友
           </button>
           <button className="share-btn ghost" type="button" onClick={onHome}>
