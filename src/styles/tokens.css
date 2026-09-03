@@ -87,6 +87,7 @@ body {
 
 body {
   min-height: 100vh;
+  min-height: 100dvh; /* iOS Safari：动态视口，工具栏展开收起都不被遮挡 */
   padding-bottom: env(safe-area-inset-bottom);
 }
 
@@ -100,6 +101,7 @@ button {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  min-height: 100dvh; /* iOS Safari：动态视口 */
   padding: 32px 20px;
   background: var(--bg-page);
 }
@@ -109,6 +111,7 @@ button {
   width: 100%;
   max-width: 390px;
   height: calc(100vh - 64px);
+  height: calc(100dvh - 64px); /* iOS Safari：动态视口，底部不被工具栏遮挡 */
   max-height: 844px;
   display: flex;
   flex-direction: column;

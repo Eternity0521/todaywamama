@@ -267,7 +267,7 @@
 }
 
 .share-toast {
-  position: fixed;
+  position: absolute; /* 壳内定位：iOS fixed 会随工具栏漂移，桌面端也不该跑出手机壳 */
   left: 50%;
   transform: translateX(-50%);
   bottom: 104px;
