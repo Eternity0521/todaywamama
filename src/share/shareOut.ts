@@ -100,6 +100,12 @@ export async function saveFortuneImage(dataUrl: string, filename: string): Promi
   // 其余安卓 / 桌面：Blob URL 下载（夸克等对 data: URL 兼容差，Blob 是标准做法）
   const ok = await downloadBlobUrl(dataUrl, filename);
   if (isWeChat) return '微信内下载受限：请长按上方图片保存到相册';
+  // 国产安卓浏览器：下载只会进浏览器目录，进系统相册的唯一途径是长按
+  if (isChineseAndroidBrowser) {
+    return ok
+      ? '已下载到浏览器目录；要存入手机相册，请长按上方图片保存'
+      : '下载失败：请长按上方图片保存到相册';
+  }
   return ok
     ? '已开始下载：图片会保存到手机下载目录，相册中可见'
     : '下载失败：请长按上方图片保存到相册';
