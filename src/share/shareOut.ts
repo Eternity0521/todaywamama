@@ -44,12 +44,6 @@ async function dataUrlToFile(dataUrl: string, name: string): Promise<File | null
   }
 }
 
-async function canShareFiles(file: File): Promise<boolean> {
-  if (typeof navigator === 'undefined' || !navigator.share) return false;
-  if (typeof navigator.canShare === 'function') return navigator.canShare({ files: [file] });
-  return true;
-}
-
 type ShareResult = 'shared' | 'cancelled' | 'unavailable';
 
 async function shareFiles(file: File, text: string): Promise<ShareResult> {
@@ -89,15 +83,16 @@ export async function saveFortuneImage(dataUrl: string, filename: string): Promi
   // iOS 上 a[download] 会打开新标签页而不是保存 → 走系统分享面板（「存储图像」）
   if (isIOS && !isWeChat) {
     const file = await dataUrlToFile(dataUrl, filename);
-    if (file && (await canShareFiles(file))) {
+    // 直接尝试，不支持文件的浏览器由 shareFiles 内部捕获后走下载兜底
+    if (file && 'share' in navigator) {
       const r = await shareFiles(file, filename);
-      if (r === 'shared') return '已弹出面板：选「存储图像」保存到相册，或直接发给好友';
+      if (r === 'shared') return '已弹出面板：点「存储图像」即可保存到相册';
     }
   }
-  // 桌面 / 安卓：直接下载（安卓静默存入下载目录）
+  // 桌面 / 安卓：直接下载（安卓存入下载目录，相册中可见）
   downloadDataUrl(dataUrl, filename);
   if (isWeChat) return '微信内下载受限：请长按上方图片保存到相册';
-  return '已开始下载；若没有反应，请长按上方图片保存';
+  return '已开始下载：图片会保存到手机下载目录，相册中可见';
 }
 
 /** 分享给朋友：返回给用户的提示文案（空串 = 无需提示） */
@@ -105,10 +100,10 @@ export async function shareFortune(text: string, dataUrl: string, filename: stri
   const url = appShareUrl();
   const file = await dataUrlToFile(dataUrl, filename);
 
-  // 1. 移动端：系统分享面板直接发图片文件（微信 / QQ 收到图）
-  if (file && isTouchDevice() && (await canShareFiles(file))) {
+  // 1. 移动端：系统分享面板直接发图片文件（微信 / QQ 收到图；不支持自动降级）
+  if (file && isTouchDevice() && 'share' in navigator) {
     const r = await shareFiles(file, text);
-    if (r === 'shared') return '已弹出分享面板，选微信 / QQ 直接发送';
+    if (r === 'shared') return '已弹出分享面板：选微信 / QQ 即可发送图片';
     if (r === 'cancelled') return '';
   }
 
@@ -122,11 +117,13 @@ export async function shareFortune(text: string, dataUrl: string, filename: stri
   if (shareResult === 'shared') return '已弹出分享面板';
   if (shareResult === 'cancelled') return '';
 
-  // 4. 复制文案兜底（微信内置浏览器无分享面板，也落在这里）
+  // 4. 复制文案兜底（小米/UC 等无分享面板的浏览器、微信内置浏览器也落在这里）
   const full = url ? `${text}｜${url}` : text;
   const ok = await copyText(full);
   if (ok) {
-    return isWeChat ? '已复制文案；微信内也可以长按图片发送' : '已复制文案，去发给队友吧';
+    return isWeChat
+      ? '微信内无法弹出分享：已复制文案，或长按上方图片发送'
+      : '已复制运势文案（含链接）：粘贴发送；想发图可长按上方图片';
   }
   return '分享失败：请长按上方图片保存后手动发送';
 }
