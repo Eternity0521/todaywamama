@@ -15,6 +15,7 @@
   flex-direction: column;
   padding: 32px 20px;
   min-height: 0;
+  overflow-y: auto; /* 矮屏兜底：分享卡比舞台高时滚动，不盖页头/按钮 */
   animation: shareRise 0.4s ease both;
 }
 
@@ -62,16 +63,15 @@
 .share-stage {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
   padding: 14px 0;
-  min-height: 0;
+  /* 不设 min-height:0：空间不足时舞台按内容撑开，由 share-inner 滚动兜底 */
 }
 
 /* 分享卡本体（设计稿：活的 HTML/CSS，跟其它屏同一套字体渲染，仅保存时才栅格化） */
 .share-card {
   position: relative;
   width: 100%;
+  margin: auto; /* 空间足够时居中；不足时顶部对齐并随外层滚动 */
   overflow: hidden;
   background: linear-gradient(170deg, #1a1224, #100c17 60%);
   border: 1px solid var(--acc-55);

@@ -39,11 +39,13 @@ export default function FlipReveal({ fortune, onDone }: Props) {
         </header>
 
         <div className="reveal-stage">
-          {cardUrl && <img className="reveal-card-img" src={cardUrl} alt={main.cardName} draggable={false} />}
-          <div className="reveal-stars" role="img" aria-label={`${main.stars} 星`}>
-            {[1, 2, 3, 4, 5].map((s) => (
-              <StarSvg key={s} on={s <= main.stars} />
-            ))}
+          <div className="reveal-card-wrap">
+            {cardUrl && <img className="reveal-card-img" src={cardUrl} alt={main.cardName} draggable={false} />}
+            <div className="reveal-stars" role="img" aria-label={`${main.stars} 星`}>
+              {[1, 2, 3, 4, 5].map((s) => (
+                <StarSvg key={s} on={s <= main.stars} />
+              ))}
+            </div>
           </div>
         </div>
 

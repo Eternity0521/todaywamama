@@ -36,27 +36,38 @@
 .reveal-stage {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 0;
+  overflow: hidden; /* 兜底：任何情况下内容不画出舞台（不盖页头/正文） */
+}
+
+/* 卡面+星级包装盒：随舞台空间收缩（牌面等比缩小），矮屏永不溢出 */
+.reveal-card-wrap {
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 18px;
 }
 
 .reveal-card-img {
-  /* 矮屏（iPhone 等）随视口收缩，避免与星级/文字重叠；比例保持 158:281 */
-  width: min(158px, calc(38dvh * 0.5623));
-  height: min(281px, 38dvh);
+  width: 158px;
+  height: 281px;
+  max-width: 78%;
+  min-height: 0;
+  flex: 0 1 auto; /* 空间不足时收缩，aspect-ratio 保持比例 */
+  aspect-ratio: 158 / 281;
   object-fit: contain;
   display: block;
   border: 1px solid var(--acc-55);
   box-shadow: 0 24px 60px -22px var(--acc-55);
-  flex: none;
 }
 
 .reveal-stars {
   display: flex;
   gap: 5px;
+  flex: none;
 }
 
 .reveal-body h1.reveal-title {
